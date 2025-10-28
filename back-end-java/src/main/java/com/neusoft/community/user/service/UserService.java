@@ -1,0 +1,116 @@
+package com.neusoft.community.user.service;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.neusoft.community.common.exception.BusinessException;
+import com.neusoft.community.common.util.JwtUtil;
+import com.neusoft.community.user.dto.LoginDTO;
+import com.neusoft.community.user.dto.RegisterDTO;
+import com.neusoft.community.user.entity.User;
+import com.neusoft.community.user.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 用户服务类
+ * 
+ * @author Neusoft
+ */
+@Slf4j
+@Service
+public class UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    /**
+     * 用户注册
+     */
+    @Transactional
+    public Map<String, Object> register(RegisterDTO registerDTO) {
+        log.info("用户注册：{}", registerDTO.getPhone());
+
+        // 检查手机号是否已存在
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getPhone, registerDTO.getPhone());
+        User existingUser = userMapper.selectOne(wrapper);
+        
+        if (existingUser != null) {
+            throw new BusinessException("该手机号已被注册");
+        }
+
+        // 创建新用户
+        User user = new User();
+        user.setPhone(registerDTO.getPhone());
+        user.setPassword(registerDTO.getPassword()); // 实际应加密
+        user.setName(registerDTO.getName());
+        user.setAddress(registerDTO.getAddress());
+        user.setStatus(1);
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+
+        userMapper.insert(user);
+
+        // 生成token
+        String token = jwtUtil.generateToken(user.getId(), "user");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userId", user.getId());
+        result.put("token", token);
+
+        return result;
+    }
+
+    /**
+     * 用户登录
+     */
+    public Map<String, Object> login(LoginDTO loginDTO) {
+        log.info("用户登录：{}", loginDTO.getPhone());
+
+        // 查询用户
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getPhone, loginDTO.getPhone());
+        User user = userMapper.selectOne(wrapper);
+
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+
+        // 验证密码
+        if (!user.getPassword().equals(loginDTO.getPassword())) {
+            throw new BusinessException("密码错误");
+        }
+
+        // 检查用户状态
+        if (user.getStatus() == 0) {
+            throw new BusinessException("账户已被禁用");
+        }
+
+        // 生成token
+        String token = jwtUtil.generateToken(user.getId(), "user");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userId", user.getId());
+        result.put("token", token);
+        result.put("phone", user.getPhone());
+        result.put("name", user.getName());
+
+        return result;
+    }
+
+    /**
+     * 获取用户信息
+     */
+    public User getUserById(Long userId) {
+        return userMapper.selectById(userId);
+    }
+}
+

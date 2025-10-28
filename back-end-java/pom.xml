@@ -15,6 +15,7 @@
     <groupId>com.neusoft</groupId>
     <artifactId>community</artifactId>
     <version>1.0.0</version>
+    <packaging>jar</packaging>
     <name>smart-community</name>
     <description>东软智慧社区平台</description>
 
