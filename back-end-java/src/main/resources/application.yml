@@ -4,9 +4,9 @@ spring:
   application:
     name: smart-community
   datasource:
-    url: jdbc:mysql://localhost:3306/smart_community?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/smart_community?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: 214076
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -23,8 +23,7 @@ spring:
           max-active: 8
           max-idle: 8
           min-idle: 0
-  server:
-    port: 8080
+
 
 server:
   port: 8989
@@ -46,7 +45,7 @@ mybatis-plus:
 
 
 jwt:
-  secret: neusoft_smart_community_secret_key_2024
+  secret: neusoft_smart_community_secret_key_2024_abcdefghijklmnopqrstuvwxyz
   expiration: 86400000
 
 logging:
