@@ -4,6 +4,9 @@ import com.neusoft.community.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 /**
  * 全局异常处理器
@@ -39,6 +42,21 @@ public class GlobalExceptionHandler {
     public Result<?> handleIllegalArgumentException(IllegalArgumentException e) {
         log.warn("参数异常：{}", e.getMessage());
         return Result.fail(400, e.getMessage());
+    }
+
+    /**
+     * 处理 @Valid 参数校验失败
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<?> handleValidationException(MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+        StringBuilder sb = new StringBuilder();
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            sb.append(fieldError.getField()).append(": ").append(fieldError.getDefaultMessage()).append("; ");
+        }
+        String msg = sb.length() > 0 ? sb.toString() : "参数校验失败";
+        log.warn("参数校验失败：{}", msg);
+        return Result.fail(400, msg);
     }
 }
 

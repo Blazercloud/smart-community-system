@@ -2,6 +2,9 @@ package com.neusoft.community.common.interceptor;
 
 import com.neusoft.community.common.annotation.NoAuth;
 import com.neusoft.community.common.util.JwtUtil;
+import com.neusoft.community.user.entity.User;
+import com.neusoft.community.user.service.UserService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 如果不是HandlerMethod，直接放行
@@ -43,11 +49,19 @@ public class AuthInterceptor implements HandlerInterceptor {
             token = token.substring(7);
         }
 
-        // 验证token
+        // 验证JWT token并从MySQL获取用户信息
         if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
-            // 将token存入请求属性
-            request.setAttribute("token", token);
-            return true;
+            Claims claims = jwtUtil.parseToken(token);
+            String userIdStr = claims.getSubject();
+            Long userId = Long.parseLong(userIdStr);
+            
+            // 从数据库验证用户
+            User user = userService.getUserById(userId);
+            if (user != null && user.getStatus() == 1) {
+                // 将 userId 存入请求属性，后续 Controller 可通过 @RequestAttribute("userId") 获取
+                request.setAttribute("userId", userId);
+                return true;
+            }
         }
 
         // token无效，返回401

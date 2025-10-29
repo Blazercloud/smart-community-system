@@ -32,7 +32,6 @@ request.interceptors.response.use(
     // If there is no `code` field (some APIs return raw data), accept it as success.
     if (typeof res.code !== 'undefined') {
       if (res.code !== 200) {
-        ElMessage.error(res.message || '请求失败')
         return Promise.reject(new Error(res.message || '请求失败'))
       }
       return res
@@ -54,7 +53,6 @@ request.interceptors.response.use(
       window.location.href = '/login'
     }
     
-    ElMessage.error(error.message || '请求失败')
     return Promise.reject(error)
   }
 )

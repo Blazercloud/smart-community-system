@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '../stores/user'
+import { useMerchantStore } from '../stores/merchant'
+import { ElMessage } from 'element-plus'
 
 const routes = [
   {
@@ -9,6 +12,16 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('../views/common/Login.vue')
+  },
+  {
+    path: '/user/register',
+    name: 'UserRegister',
+    component: () => import('../views/user/Register.vue')
+  },
+  {
+    path: '/merchant/register',
+    name: 'MerchantRegister',
+    component: () => import('../views/merchant/Register.vue')
   },
   {
     path: '/user',
@@ -31,12 +44,105 @@ const routes = [
         component: () => import('../views/admin/Index.vue')
       }
     ]
+  },
+  {
+    path: '/merchant',
+    component: () => import('../views/merchant/Home.vue'),
+    children: [
+      {
+        path: 'home',
+        name: 'MerchantHome',
+        component: () => import('../views/merchant/Index.vue')
+      },
+      {
+        path: 'stores',
+        name: 'MerchantStores',
+        component: () => import('../views/merchant/stores/StoreManagement.vue')
+      },
+      {
+        path: 'products',
+        name: 'MerchantProducts',
+        component: () => import('../views/merchant/products/ProductManagement.vue')
+      },
+      {
+        path: 'orders',
+        name: 'MerchantOrders',
+        component: () => import('../views/merchant/orders/OrderManagement.vue')
+      }
+    ]
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const merchantStore = useMerchantStore()
+  const userToken = userStore.token
+  const merchantToken = merchantStore.merchantToken
+
+  // 访问登录页和注册页逻辑
+  if (to.path === '/login' || to.path === '/user/register' || to.path === '/merchant/register') {
+    if (merchantToken) {
+      next('/merchant/home')
+      return
+    }
+    if (userToken) {
+      // 根据用户信息中的角色决定跳转到哪个首页
+      if (userStore.userInfo?.username === 'admin') {
+        next('/admin/home')
+      } else {
+        next('/user/home')
+      }
+      return
+    }
+    next()
+    return
+  }
+
+  // 商家路由权限判断
+  if (to.path.startsWith('/merchant')) {
+    if (!merchantToken) {
+      ElMessage.warning('请先登录')
+      next('/login')
+      return
+    }
+    next()
+    return
+  }
+
+  // 管理员路由权限判断
+  if (to.path.startsWith('/admin')) {
+    if (!userToken || userStore.userInfo?.username !== 'admin') {
+      ElMessage.warning('需要管理员权限')
+      next('/login')
+      return
+    }
+    next()
+    return
+  }
+
+  // 用户路由权限判断
+  if (to.path.startsWith('/user')) {
+    if (!userToken) {
+      ElMessage.warning('请先登录')
+      next('/login')
+      return
+    }
+    if (userStore.userInfo?.username === 'admin') {
+      next('/admin/home')
+      return
+    }
+    next()
+    return
+  }
+
+  // 其他路由
+  next()
 })
 
 export default router

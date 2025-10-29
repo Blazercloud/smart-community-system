@@ -8,15 +8,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * 用户实体类
- * 
- * @author Neusoft
- */
 @Data
 @TableName("user")
 public class User {
-
     @TableId(type = IdType.AUTO)
     private Long id;
     
@@ -42,4 +36,3 @@ public class User {
     
     private LocalDateTime updateTime;
 }
-

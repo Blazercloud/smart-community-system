@@ -9,9 +9,9 @@ import com.neusoft.community.user.entity.User;
 import com.neusoft.community.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -55,17 +55,21 @@ public class UserService {
         user.setName(registerDTO.getName());
         user.setAddress(registerDTO.getAddress());
         user.setStatus(1);
+        user.setGender(0); // 默认未知
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
 
         userMapper.insert(user);
 
-        // 生成token
-        String token = jwtUtil.generateToken(user.getId(), "user");
+        // 生成 JWT token
+        String token = jwtUtil.generateToken(user.getId().toString(), "USER");
 
         Map<String, Object> result = new HashMap<>();
         result.put("userId", user.getId());
         result.put("token", token);
+        result.put("phone", user.getPhone());
+        result.put("name", user.getName());
+        result.put("address", user.getAddress());
 
         return result;
     }
@@ -85,7 +89,7 @@ public class UserService {
             throw new BusinessException("用户不存在");
         }
 
-        // 验证密码（假设使用 BCrypt 加密）
+        // 验证密码
         if (!BCrypt.checkpw(loginDTO.getPassword(), user.getPassword())) {
             throw new BusinessException("密码错误");
         }
@@ -95,16 +99,29 @@ public class UserService {
             throw new BusinessException("账户已被禁用");
         }
 
-        // 生成token
-        String token = jwtUtil.generateToken(user.getId(), "user");
+        // 生成 JWT token
+        String token = jwtUtil.generateToken(user.getId().toString(), "USER");
 
         Map<String, Object> result = new HashMap<>();
         result.put("userId", user.getId());
         result.put("token", token);
         result.put("phone", user.getPhone());
         result.put("name", user.getName());
+        result.put("avatar", user.getAvatar());
+        result.put("gender", user.getGender());
+        result.put("birthday", user.getBirthday());
+        result.put("address", user.getAddress());
+        result.put("status", user.getStatus());
 
+        log.info("前端传入明文密码: {}", loginDTO.getPassword());
+        log.info("数据库中的加密密码: {}", user.getPassword());
+        log.info("匹配结果: {}", BCrypt.checkpw(loginDTO.getPassword(), user.getPassword()));
+        log.info("输入密码: '{}'", loginDTO.getPassword());
+        log.info("数据库密码: '{}'", user.getPassword());
+        log.info("数据库密码长度: {}", user.getPassword().length());
+        log.info("匹配结果: {}", BCrypt.checkpw(loginDTO.getPassword(), user.getPassword()));
         return result;
+
     }
 
     /**

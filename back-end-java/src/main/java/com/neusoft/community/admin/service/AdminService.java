@@ -1,12 +1,11 @@
 package com.neusoft.community.admin.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.neusoft.community.common.exception.BusinessException;
-import com.neusoft.community.common.util.JwtUtil;
 import com.neusoft.community.admin.dto.AdminLoginDTO;
 import com.neusoft.community.admin.entity.Admin;
 import com.neusoft.community.admin.mapper.AdminMapper;
-import lombok.extern.slf4j.Slf4j;
+import com.neusoft.community.common.exception.BusinessException;
+import com.neusoft.community.common.util.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class AdminService {
     private AdminMapper adminMapper;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     /**
      * 管理员登录
@@ -59,8 +58,8 @@ public class AdminService {
         admin.setLastLoginTime(LocalDateTime.now());
         adminMapper.updateById(admin);
 
-        // 生成token
-        String token = jwtUtil.generateToken(admin.getId(), "admin");
+        // 生成 Redis token（不透明）
+        String token = tokenService.generateTokenForUser(admin.getId());
 
         Map<String, Object> result = new HashMap<>();
         result.put("adminId", admin.getId());

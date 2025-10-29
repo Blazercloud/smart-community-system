@@ -3,6 +3,7 @@ package com.neusoft.community.user.controller;
 import com.neusoft.community.common.Result;
 import com.neusoft.community.common.annotation.NoAuth;
 import com.neusoft.community.user.dto.LoginDTO;
+import jakarta.validation.Valid;
 import com.neusoft.community.user.dto.RegisterDTO;
 import com.neusoft.community.user.entity.User;
 import com.neusoft.community.user.service.UserService;
@@ -29,7 +30,7 @@ public class UserController {
      * 用户注册
      */
     @NoAuth
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     public Result<Map<String, Object>> register(@RequestBody RegisterDTO registerDTO) {
         log.info("用户注册请求：{}", registerDTO.getPhone());
         Map<String, Object> result = userService.register(registerDTO);
@@ -41,7 +42,7 @@ public class UserController {
      */
     @NoAuth
     @PostMapping("/login")
-    public Result<Map<String, Object>> login(@RequestBody LoginDTO loginDTO) {
+    public Result<Map<String, Object>> login(@Valid @RequestBody LoginDTO loginDTO) {
         log.info("用户登录请求：{}", loginDTO.getPhone());
         Map<String, Object> result = userService.login(loginDTO);
         return Result.success(result);
@@ -50,10 +51,12 @@ public class UserController {
     /**
      * 获取当前用户信息
      */
-    @GetMapping("/info")
-    public Result<User> getUserInfo(@RequestAttribute("token") String token) {
-        // 从token中获取用户ID
-        Long userId = Long.parseLong(org.springframework.util.StringUtils.hasText(token) ? token : "1");
+    @GetMapping("/user/info")
+    public Result<User> getUserInfo(@RequestAttribute("userId") Long userId) {
+        // userId 已由拦截器放入请求属性
+        if (userId == null) {
+            return Result.fail("Unauthorized");
+        }
         User user = userService.getUserById(userId);
         return Result.success(user);
     }

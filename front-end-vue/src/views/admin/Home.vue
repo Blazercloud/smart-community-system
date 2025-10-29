@@ -87,6 +87,7 @@ const handleLogout = () => {
 
   height: 100vh;
   background: #f6f7fb;
+  overflow: hidden; /* 防止页面整体滚动 */
 }
 
 .header-content {
@@ -161,6 +162,8 @@ const handleLogout = () => {
 .el-main {
   padding: 20px;
   background: #f6f7fb;
+  overflow-y: auto; /* 允许内容区域滚动 */
+  height: 100%; /* 确保内容区域充满剩余空间 */
 }
 
 /* Make the main container fill viewport and ensure the aside stretches */

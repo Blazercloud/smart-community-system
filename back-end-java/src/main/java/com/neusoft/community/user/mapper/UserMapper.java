@@ -3,13 +3,16 @@ package com.neusoft.community.user.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.neusoft.community.user.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
-/**
- * 用户Mapper
- * 
- * @author Neusoft
- */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-}
+    @Select("SELECT * FROM user WHERE phone = #{phone}")
+    User findByPhone(String phone);
 
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    User findById(Long id);
+
+    @Select("SELECT * FROM user WHERE name = #{name}")
+    User findByUsername(String name);
+}

@@ -17,7 +17,10 @@
               <el-input v-model="userForm.password" type="password" placeholder="请输入密码" />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" style="width: 100%" @click="handleUserLogin">登录</el-button>
+              <div class="button-group">
+                <el-button type="primary" style="width: 48%" @click="handleUserLogin">登录</el-button>
+                <el-button type="info" style="width: 48%" @click="handleUserRegister">注册</el-button>
+              </div>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -35,6 +38,23 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
+
+        <el-tab-pane label="商家登录" name="merchant">
+          <el-form :model="merchantForm" :rules="merchantRules" ref="merchantFormRef" label-width="80px">
+            <el-form-item label="用户名" prop="username">
+              <el-input v-model="merchantForm.username" placeholder="请输入用户名" />
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="merchantForm.password" type="password" placeholder="请输入密码" />
+            </el-form-item>
+            <el-form-item>
+              <div class="button-group">
+                <el-button type="primary" style="width: 48%" @click="handleMerchantLogin">登录</el-button>
+                <el-button type="info" style="width: 48%" @click="handleMerchantRegister">注册</el-button>
+              </div>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -46,10 +66,13 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { login } from '../../api/user.js'
 import { adminLogin } from '../../api/admin.js'
+import { merchantLogin } from '../../api/shop.js'
 import { useUserStore } from '../../stores/user.js'
+import { useMerchantStore } from '../../stores/merchant.js'
 
 const router = useRouter()
 const userStore = useUserStore()
+const merchantStore = useMerchantStore()
 
 const activeTab = ref('user')
 
@@ -63,8 +86,14 @@ const adminForm = ref({
   password: 'admin123'
 })
 
+const merchantForm = ref({
+  username: 'seller',
+  password: 'seller123'
+})
+
 const userFormRef = ref()
 const adminFormRef = ref()
+const merchantFormRef = ref()
 
 const rules = {
   phone: [
@@ -84,8 +113,26 @@ const adminRules = {
   ]
 }
 
+const merchantRules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' }
+  ]
+}
+
 const handleTabChange = () => {
   // 切换标签时重置表单
+  try {
+    userFormRef.value && userFormRef.value.resetFields()
+  } catch (e) {}
+  try {
+    adminFormRef.value && adminFormRef.value.resetFields()
+  } catch (e) {}
+  try {
+    merchantFormRef.value && merchantFormRef.value.resetFields()
+  } catch (e) {}
 }
 
 const handleUserLogin = async () => {
@@ -125,6 +172,32 @@ const handleAdminLogin = async () => {
     }
   })
 }
+
+const handleMerchantLogin = async () => {
+  if (!merchantFormRef.value) return
+
+  await merchantFormRef.value.validate(async (valid) => {
+    if (valid) {
+      try {
+        const res = await merchantLogin(merchantForm.value)
+        merchantStore.setMerchantToken(res.data.token)
+        merchantStore.setMerchantInfo({ id: res.data.merchantId || res.data.id, username: res.data.username, name: res.data.name })
+        ElMessage.success('登录成功')
+        router.push('/merchant/home')
+      } catch (error) {
+        ElMessage.error(error?.message || '登录失败')
+      }
+    }
+  })
+}
+
+const handleUserRegister = () => {
+  router.push('/user/register')
+}
+
+const handleMerchantRegister = () => {
+  router.push('/merchant/register')
+}
 </script>
 
 <style scoped>
@@ -147,6 +220,12 @@ const handleAdminLogin = async () => {
 
 .card-header h2 {
   margin: 0;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }
 </style>
 
