@@ -28,13 +28,20 @@ request.interceptors.response.use(
   response => {
     const res = response.data
     
-    // 如果状态码不是200，则认为是错误
-    if (res.code !== 200) {
-      ElMessage.error(res.message || '请求失败')
-      return Promise.reject(new Error(res.message || '请求失败'))
+    // If backend uses a wrapper like { code: 200, data: ... }, treat non-200 as error.
+    // If there is no `code` field (some APIs return raw data), accept it as success.
+    if (typeof res.code !== 'undefined') {
+      if (res.code !== 200) {
+        ElMessage.error(res.message || '请求失败')
+        return Promise.reject(new Error(res.message || '请求失败'))
+      }
+      return res
     }
-    
-    return res
+
+  // No `code` field — assume success. Normalize the return value so callers
+  // that expect `res.data.*` continue to work: return an object with a
+  // `data` property containing the raw response.
+  return { data: res }
   },
   error => {
     console.error('请求错误:', error)

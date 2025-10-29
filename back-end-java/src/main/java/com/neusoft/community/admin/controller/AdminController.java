@@ -16,10 +16,11 @@ import java.util.Map;
  * 
  * @author Neusoft
  */
-@Slf4j
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private AdminService adminService;

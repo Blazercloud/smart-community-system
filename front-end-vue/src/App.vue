@@ -3,9 +3,12 @@
 </template>
 
 <script setup>
+// App-level logic can go here. Keep App.vue minimal; put pages into `views/`.
 </script>
 
 <style>
+html, body, #app { height: 100%; margin: 0; }
+
 * {
   margin: 0;
   padding: 0;

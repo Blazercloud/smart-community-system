@@ -1,15 +1,15 @@
 spring:
   application:
     name: smart-community
-
-  # 数据源配置
   datasource:
     url: jdbc:mysql://localhost:3306/smart_community?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: 214076
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-  # Redis配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
   data:
     redis:
       host: localhost
@@ -21,8 +21,14 @@ spring:
           max-active: 8
           max-idle: 8
           min-idle: 0
+  server:
+    port: 8081
 
-# MyBatis Plus配置
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.neusoft.community.entity
@@ -36,12 +42,10 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
-# JWT配置
 jwt:
   secret: neusoft_smart_community_secret_key_2024
-  expiration: 86400000 # 24小时（毫秒）
+  expiration: 86400000
 
-# 日志配置
 logging:
   level:
     com.neusoft.community: info
@@ -51,17 +55,3 @@ logging:
     name: logs/community.log
     max-size: 10MB
     max-history: 30
-
-# 服务器配置
-server:
-  port: 8080
-  servlet:
-    context-path: /api
-
-# 文件上传配置
-spring:
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 50MB
-

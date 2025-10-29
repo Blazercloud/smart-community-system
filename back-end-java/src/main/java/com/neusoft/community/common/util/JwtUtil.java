@@ -70,7 +70,7 @@ public class JwtUtil {
      * 获取Claims
      */
     private Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(getSecretKey())
                 .build()
                 .parseClaimsJws(token)
@@ -99,4 +99,3 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 }
-

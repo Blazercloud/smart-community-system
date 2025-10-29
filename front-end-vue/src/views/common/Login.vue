@@ -100,7 +100,8 @@ const handleUserLogin = async () => {
         ElMessage.success('登录成功')
         router.push('/user/home')
       } catch (error) {
-        ElMessage.error('登录失败')
+        // Show server error message when available for better feedback
+        ElMessage.error(error?.message || '登录失败')
       }
     }
   })
@@ -118,7 +119,8 @@ const handleAdminLogin = async () => {
         ElMessage.success('登录成功')
         router.push('/admin/home')
       } catch (error) {
-        ElMessage.error('登录失败')
+        // Show server error message when available for better feedback
+        ElMessage.error(error?.message || '登录失败')
       }
     }
   })
@@ -131,7 +133,7 @@ const handleAdminLogin = async () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #e0e2eb;
 }
 
 .login-card {

@@ -19,9 +19,10 @@ import java.util.Map;
  * 
  * @author Neusoft
  */
-@Slf4j
 @Service
 public class AdminService {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AdminService.class);
 
     @Autowired
     private AdminMapper adminMapper;

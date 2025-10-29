@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class UserService {
         // 创建新用户
         User user = new User();
         user.setPhone(registerDTO.getPhone());
-        user.setPassword(registerDTO.getPassword()); // 实际应加密
+        user.setPassword(BCrypt.hashpw(registerDTO.getPassword(), BCrypt.gensalt())); // 使用 BCrypt 加密
         user.setName(registerDTO.getName());
         user.setAddress(registerDTO.getAddress());
         user.setStatus(1);
@@ -84,8 +85,8 @@ public class UserService {
             throw new BusinessException("用户不存在");
         }
 
-        // 验证密码
-        if (!user.getPassword().equals(loginDTO.getPassword())) {
+        // 验证密码（假设使用 BCrypt 加密）
+        if (!BCrypt.checkpw(loginDTO.getPassword(), user.getPassword())) {
             throw new BusinessException("密码错误");
         }
 
