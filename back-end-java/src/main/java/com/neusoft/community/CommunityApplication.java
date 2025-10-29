@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Neusoft
  * @date 2024-10-27
  */
-@SpringBootApplication
-@MapperScan("com.neusoft.community.*.mapper")
+@SpringBootApplication(scanBasePackages = "com.neusoft.community")
 public class CommunityApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(CommunityApplication.class);
