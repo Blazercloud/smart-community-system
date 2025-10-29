@@ -32,12 +32,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <!--Spring Boot 3与MyBatis 3.0.x不完全兼容，这是跑不起来的根源问题所在-->
         <!-- MyBatis Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
+            <version>3.5.6</version>
             <exclusions>
                 <!-- 排除旧版 MyBatis Boot Starter -->
                 <exclusion>
