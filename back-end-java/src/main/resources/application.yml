@@ -45,8 +45,9 @@ mybatis-plus:
 
 
 jwt:
-  secret: neusoft_smart_community_secret_key_2024_abcdefghijklmnopqrstuvwxyz
+  secret: A6YbPCpYoQqRfQm7hXvF6A1eJmf4wyo1HzR8SAmuGic=
   expiration: 86400000
+
 
 logging:
   level:
@@ -55,3 +56,23 @@ logging:
     com.baomidou.mybatisplus: debug
   file:
     name: logs/community.log
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+  openapi:
+    title: 智慧社区平台API文档
+    description: 东软智慧社区平台接口文档
+    email: support@neusoft.com
+    url: http://localhost:8989
+    version: 1.0.0
+  basic:
+    enable: false
+  production: false
