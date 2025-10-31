@@ -16,38 +16,54 @@
       
       <el-container>
         <el-aside width="200px">
-          <el-menu
-            router
-            default-active="/user/home"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b"
-          >
-            <el-menu-item index="/user/home">
-              <el-icon><View /></el-icon>
-              <span>首页</span>
-            </el-menu-item>
-            <el-menu-item index="/user/profile">
-              <el-icon><User /></el-icon>
-              <span>个人中心</span>
-            </el-menu-item>
-            <el-menu-item index="/user/wallet">
-              <el-icon><Wallet /></el-icon>
-              <span>我的钱包</span>
-            </el-menu-item>
-            <el-menu-item index="/shop/products">
-              <el-icon><ShoppingBag /></el-icon>
-              <span>商城</span>
-            </el-menu-item>
-            <el-menu-item index="/community/notices">
-              <el-icon><Document /></el-icon>
-              <span>社区公告</span>
-            </el-menu-item>
-            <el-menu-item index="/community/services">
-              <el-icon><Service /></el-icon>
-              <span>社区服务</span>
-            </el-menu-item>
-          </el-menu>
+    <el-menu
+  router
+  default-active="/user/home"
+  background-color="#545c64"
+  text-color="#fff"
+  active-text-color="#ffd04b"
+>
+  <!-- 首页 -->
+  <el-menu-item index="/user/home">
+    <el-icon><View /></el-icon>
+    <span>首页</span>
+  </el-menu-item>
+
+  <!-- 社区服务二级菜单 -->
+  <el-sub-menu index="community">
+    <template #title>
+      <el-icon><Document /></el-icon>
+      <span>社区服务</span>
+    </template>
+    <el-menu-item index="/user/community/payment">物业缴费</el-menu-item>
+    <el-menu-item index="/user/community/service">便民服务</el-menu-item>
+    <el-menu-item index="/user/community/repair">报修管理</el-menu-item>
+    <el-menu-item index="/user/community/Notice">公告通知</el-menu-item>
+  </el-sub-menu>
+
+  <!-- 订单与购物二级菜单 -->
+  <el-sub-menu index="mall">
+    <template #title>
+      <el-icon><ShoppingBag /></el-icon>
+      <span>商城与订单</span>
+    </template>
+    <el-menu-item index="/user/mall/home">便民超市</el-menu-item>
+    <el-menu-item index="/user/mall/orders">我的订单</el-menu-item>
+    <el-menu-item index="/user/mall/cart">购物车</el-menu-item>
+  </el-sub-menu>
+
+  <!-- 个人中心二级菜单 -->
+  <el-sub-menu index="account">
+    <template #title>
+      <el-icon><User /></el-icon>
+      <span>个人中心</span>
+    </template>
+    <el-menu-item index="/user/account/profile">个人资料</el-menu-item>
+    <el-menu-item index="/user/account/wallet">钱包</el-menu-item>
+    <el-menu-item index="/user/account/password">修改密码</el-menu-item>
+  </el-sub-menu>
+</el-menu>
+
         </el-aside>
         
         <el-main>
@@ -63,7 +79,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '../../stores/user.js'
-import { View, User, Wallet, ShoppingBag, Document, Service } from '@element-plus/icons-vue'
+import { View, User, ShoppingBag, Document } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userStore = useUserStore()

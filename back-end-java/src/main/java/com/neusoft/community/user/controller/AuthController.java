@@ -1,5 +1,6 @@
 package com.neusoft.community.user.controller;
 
+import com.neusoft.community.common.Result;
 import com.neusoft.community.user.dto.LoginRequest;
 import com.neusoft.community.user.dto.LoginResponse;
 import com.neusoft.community.user.service.AuthService;
@@ -17,7 +18,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
-        return authService.login(request);
+    public Result<LoginResponse> login(@RequestBody LoginRequest request) {
+        return Result.success(authService.login(request));
     }
 }

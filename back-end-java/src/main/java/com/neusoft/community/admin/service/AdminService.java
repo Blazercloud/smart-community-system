@@ -9,7 +9,6 @@ import com.neusoft.community.common.util.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,9 +53,6 @@ public class AdminService {
             throw new BusinessException("账户已被禁用");
         }
 
-        // 更新最后登录时间
-        admin.setLastLoginTime(LocalDateTime.now());
-        adminMapper.updateById(admin);
 
         // 生成 Redis token（不透明）
         String token = tokenService.generateTokenForUser(admin.getId());

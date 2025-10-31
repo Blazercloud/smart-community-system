@@ -93,37 +93,7 @@ const routes = [
         path: 'home',
         name: 'AdminHome',
         component: () => import('../views/admin/Index.vue')
-      },
-      {
-        path: 'property/bill',
-        name: 'AdminBill',
-        component: () => import('../views/admin/property/Bill.vue')
-      },
-      {
-        path: 'property/parkingspaces',
-        name: 'AdminparkingSpaces',
-        component: () => import('../views/admin/property/Parkingspaces.vue')
-      },
-      {
-        path: 'property/notices',
-        name: 'AdminNotices',
-        component: () => import('../views/admin/property/Notice.vue')
-      },
-      {
-        path: 'property/visitors',
-        name: 'AdminVisitors',
-        component: () => import('../views/admin/property/Visitors.vue')
-      },
-      {
-        path: 'property/complaints',
-        name: 'AdminComplaints',
-        component: () => import('../views/admin/property/Complaints.vue')
-      },
-      {
-        path: 'property/repairs',
-        name: 'AdminRepairs',
-        component: () => import('../views/admin/property/Repairs.vue')
-      },
+      }
     ]
   },
   {

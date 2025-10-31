@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container"id="building">
     <el-card class="login-card">
       <template #header>
         <div class="card-header">
@@ -77,8 +77,8 @@ const merchantStore = useMerchantStore()
 const activeTab = ref('user')
 
 const userForm = ref({
-  phone: '13800138001',
-  password: 'user123'
+  phone: '13800001111',
+  password: '123456'
 })
 
 const adminForm = ref({
@@ -206,11 +206,19 @@ const handleMerchantRegister = () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #e0e2eb;
+  width: 100%;
+  position: fixed;
+  background: url('/images/BJ1.jpg') no-repeat center center;
+  background-size: cover;
 }
 
 .login-card {
   width: 450px;
+  background: rgba(255, 255, 255, 0.524);    /* 降低背景不透明度 */
+  backdrop-filter: blur(10px);              /* 增加模糊效果 */
+  border-radius: 16px;                      /* 圆角边框 */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 添加半透明边框 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);  /* 柔和的阴影 */
 }
 
 .card-header {
@@ -227,5 +235,26 @@ const handleMerchantRegister = () => {
   justify-content: space-between;
   gap: 10px;
 }
-</style>
 
+/* 美化表单元素 */
+:deep(.el-input__wrapper) {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+:deep(.el-tabs__item) {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+:deep(.el-tabs__item.is-active) {
+  color: #409eff;
+  font-weight: bold;
+}
+
+/* 确保内容清晰可见 */
+.el-form-item__label {
+  color: #2c3e50;
+  font-weight: 500;
+}
+</style>

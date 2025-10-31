@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 生成 Redis token
-        String token = tokenService.generateTokenForUser(user.getId());
+        String token = tokenService.generateTokenForUser(Long.valueOf(user.getPhone()));
 
         return new LoginResponse(token, user);
     }

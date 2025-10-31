@@ -17,37 +17,55 @@
       <el-container>
         <el-aside width="200px">
           <el-menu
-            router
-            default-active="/admin/home"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b"
-          >
-            <el-menu-item index="/admin/home">
-              <el-icon><View /></el-icon>
-              <span>首页</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/users">
-              <el-icon><User /></el-icon>
-              <span>用户管理</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/stores">
-              <el-icon><Shop /></el-icon>
-              <span>门店管理</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/products">
-              <el-icon><ShoppingBag /></el-icon>
-              <span>商品管理</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/orders">
-              <el-icon><Document /></el-icon>
-              <span>订单管理</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/statistics">
-              <el-icon><DataAnalysis /></el-icon>
-              <span>数据统计</span>
-            </el-menu-item>
-          </el-menu>
+  router
+  default-active="/admin/home"
+  background-color="#545c64"
+  text-color="#fff"
+  active-text-color="#ffd04b"
+>
+  <!-- 首页 -->
+  <el-menu-item index="/admin/home">
+    <el-icon><View /></el-icon>
+    <span>首页</span>
+  </el-menu-item>
+
+  <!-- 物业管理 -->
+  <el-sub-menu index="property">
+    <template #title>
+      <el-icon><Document /></el-icon>
+      <span>物业管理</span>
+    </template>
+    <el-menu-item index="/admin/property/bill">物业缴费</el-menu-item>
+    <el-menu-item index="/admin/property/parkingspaces">车位管理</el-menu-item>
+  </el-sub-menu>
+
+  <!-- 公告与访客 -->
+  <el-sub-menu index="community">
+    <template #title>
+      <el-icon><User /></el-icon>
+      <span>社区管理</span>
+    </template>
+    <el-menu-item index="/admin/property/notices">公告通知</el-menu-item>
+    <el-menu-item index="/admin/property/visitors">访客管理</el-menu-item>
+  </el-sub-menu>
+
+  <!-- 投诉与报修 -->
+  <el-sub-menu index="service">
+    <template #title>
+      <el-icon><ShoppingBag /></el-icon>
+      <span>报事与投诉</span>
+    </template>
+    <el-menu-item index="/admin/property/complaints">物业投诉</el-menu-item>
+    <el-menu-item index="/admin/property/repairs">报事维修</el-menu-item>
+  </el-sub-menu>
+
+  <!-- 数据统计 -->
+  <el-menu-item index="/admin/statistics">
+    <el-icon><DataAnalysis /></el-icon>
+    <span>数据统计</span>
+  </el-menu-item>
+</el-menu>
+
         </el-aside>
         
         <el-main>
@@ -187,4 +205,3 @@ const handleLogout = () => {
   overflow: auto;
 }
 </style>
-

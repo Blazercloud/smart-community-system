@@ -141,4 +141,4 @@ const goBack = () => {
   justify-content: center;
   gap: 20px;
 }
-</style>]]>
+</style>

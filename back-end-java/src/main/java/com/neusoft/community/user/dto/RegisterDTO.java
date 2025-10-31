@@ -14,8 +14,20 @@ public class RegisterDTO {
     
     private String password;
     
-    private String name;
+    private String username;
     
-    private String address;
+    private String email;
+
+    private String roomNumber;
+
+    private String houseType;
+
+    public String getHouseType() {
+        return houseType;
+    }
+
+    public void setHouseType(String houseType) {
+        this.houseType = houseType;
+    }
 }
 
