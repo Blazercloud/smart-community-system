@@ -1,7 +1,7 @@
 package com.neusoft.community.common.config;
 
+import com.neusoft.community.admin.Interceptor.AdminAuthInterceptor;
 import com.neusoft.community.common.interceptor.AuthInterceptor;
-import com.neusoft.community.common.interceptor.AdminAuthInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Web全局配置类
- *
  * 主要职责：
  * 1️⃣ 注册用户与管理员拦截器
  * 2️⃣ 配置 CORS 跨域访问
@@ -42,14 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/admin/login"
                 );
-
-        // Swagger / Knife4j 相关文档接口放行
-        registry.addInterceptor(authInterceptor)
-                .excludePathPatterns(
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html"
-                );
     }
 
     /**
@@ -72,7 +63,16 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Swagger UI 静态资源路径
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui-dist/")
+                .resourceChain(false);
+        
+        // Knife4j 静态资源路径
+        registry.addResourceHandler("/doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/")
+                .resourceChain(false);
+                
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/")
                 .resourceChain(false);
     }
 }

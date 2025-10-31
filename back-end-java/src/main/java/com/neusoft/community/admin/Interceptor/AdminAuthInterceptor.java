@@ -1,4 +1,4 @@
-package com.neusoft.community.common.interceptor;
+package com.neusoft.community.admin.Interceptor;
 
 import com.neusoft.community.admin.entity.Admin;
 import com.neusoft.community.admin.service.AdminService;

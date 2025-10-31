@@ -39,11 +39,6 @@ public class NoticeVO {
     private Integer status;
 
     /**
-     * 浏览量
-     */
-    private Integer viewCount;
-
-    /**
      * 创建时间
      */
     private Date createTime;

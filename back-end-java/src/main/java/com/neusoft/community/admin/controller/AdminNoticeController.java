@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/admin/message/notice")
+@RequestMapping("/admin/property/notices")
 @RestController
 public class AdminNoticeController {
 

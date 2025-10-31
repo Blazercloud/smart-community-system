@@ -45,10 +45,6 @@ public class Notice {
      */
     private Integer status;
 
-    /**
-     * 浏览量
-     */
-    private Integer viewCount;
 
     /**
      * 创建时间

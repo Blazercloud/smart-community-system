@@ -22,9 +22,9 @@ import javax.management.Query;
 public interface NoticeMapper extends BaseMapper<Notice> {
 
     // 分页查询公告VO（关联role表，使用注解SQL）
-    @Select("SELECT n.*, r.name AS publisherName " +
+    @Select("SELECT n.*, a.role AS publisherName " +
             "FROM notice n " +
-            "LEFT JOIN role r ON n.publisher_id = r.code "+
+            "LEFT JOIN admin a ON n.publisher_id = a.id "+
             "${ew.customSqlSegment}"
     )
     IPage<NoticeVO> selectNoticeVOPage(

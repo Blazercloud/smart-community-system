@@ -8,7 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.neusoft.community")
 @MapperScan("com.neusoft.community.**.mapper") // ⭐ 自动扫描所有子包下的 mapper
 public class CommunityApplication {
 

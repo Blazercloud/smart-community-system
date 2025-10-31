@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取公告列表
 export function getNoticeList(params) {
   return request({
-    url: '/community/notice/list',
+    url: '/community/noticelist',
     method: 'get',
     params
   })
