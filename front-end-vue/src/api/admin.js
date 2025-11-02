@@ -13,13 +13,14 @@ export const adminLogin = (data) => {
 export const getAdminInfo = () => {
   return request.get('/admin/info')
 }
-// export function createNotice(data) {
-//   return request({
-//     url:'/admin/property/notices',
-//     method:'post',
-//     data
-//   }) 
-// }
+export function createNotice(data) {
+  return request({
+    url:'/admin/property/notices',
+    method:'post',
+    data
+  }) 
+}
+
 // export function getNotices(params) {
 //   return request({
 //     url:'/admin/property/notices',
@@ -36,10 +37,19 @@ export function updateNotice(data) {
 }
 // export function deleteNotice(id) {
 //   return request({
-//     url: `/admin/notice/${id}`,
+//     url: `/admin/property/notice/${id}`,
 //     method: 'delete'
 //   })
 // }
+
+// 删除公告
+export const deleteNotice = (id) => { 
+    return request({
+        url: `/admin/property/notices/${id}`,
+        method: 'delete', 
+    })
+}
+
 // export function deleteNotice(data){
 //   return request({
 //     url:'/admin/property/notices/Delete',

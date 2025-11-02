@@ -21,7 +21,7 @@ import javax.management.Query;
 */
 public interface NoticeMapper extends BaseMapper<Notice> {
 
-    // 分页查询公告VO（关联role表，使用注解SQL）
+    // 分页查询公告VO（关联admin表，使用注解SQL）
     @Select("SELECT n.*, a.role AS publisherName " +
             "FROM notice n " +
             "LEFT JOIN admin a ON n.publisher_id = a.id "+

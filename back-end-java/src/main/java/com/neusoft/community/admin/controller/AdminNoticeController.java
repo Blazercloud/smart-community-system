@@ -23,10 +23,26 @@ public class AdminNoticeController {
     /**
      * 更新公告
      */
-    @NoAuth
     @PutMapping
     public Result<Void> UpdateNotice(@RequestBody Notice notice) {
 
         return noticeService.updateNotice(notice);
+    }
+
+    /**
+     * 新建公告
+     */
+    @PostMapping
+    public Result<Void> CreateNotice(@RequestBody Notice notice) {
+
+        return noticeService.createNotice(notice);
+    }
+
+    /**
+     * 删除公告
+     */
+    @DeleteMapping("/{id}")
+    public Result<Void> DeleteNotice(@PathVariable("id") Integer id) {
+        return noticeService.deleteNotice(id);
     }
 }

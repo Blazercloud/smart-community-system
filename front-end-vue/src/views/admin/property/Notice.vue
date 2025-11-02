@@ -26,11 +26,21 @@
       </el-button>
     </div>
 
+    <!-- 修复：确保header-click事件正确绑定，并添加排序图标显示控制 -->
+    <el-table 
+      :data="notices" 
+      style="width: 100%" 
+      :loading="loading" 
+      @header-click="handleTableHeaderClick"
+      :default-sort="{ prop: sortField, order: sortOrder }"
+    >
+      <!-- 连续序号列 -->
+      <el-table-column label="序号" width="80">
+        <template #default="{ $index }">
+          {{ (currentPage - 1) * pageSize + $index + 1 }}
+        </template>
+      </el-table-column>
 
-
-    <el-table :data="notices" style="width: 100%" :loading="loading">
-      <!-- 表格列保持不变 -->
-      <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="title" label="标题" />
       <el-table-column prop="type" label="类型" width="120">
         <template #default="{ row }">
@@ -45,9 +55,31 @@
         </template>
       </el-table-column>
       <el-table-column prop="publisherName" label="发布人" width="120" />
-      <el-table-column prop="createTime" label="发布时间" width="180">
+      
+      <!-- 发布时间列：修复排序配置 -->
+      <el-table-column 
+        prop="createTime" 
+        label="发布时间" 
+        width="180" 
+        sortable 
+        :sort-orders="['ascending', 'descending']"
+        :sort-by="sortField === 'createTime' ? sortOrder : ''"
+      >
         <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
       </el-table-column>
+      
+      <!-- 更新时间列：修复排序配置 -->
+      <el-table-column 
+        prop="updateTime" 
+        label="更新时间" 
+        width="180" 
+        sortable 
+        :sort-orders="['ascending', 'descending']"
+        :sort-by="sortField === 'updateTime' ? sortOrder : ''"
+      >
+        <template #default="{ row }">{{ formatTime(row.updateTime) }}</template>
+      </el-table-column>
+      
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="handleEdit(row)" :loading="loading">
@@ -61,13 +93,12 @@
     </el-table>
 
     <div class="pagination">
-      <!-- 分页组件保持不变 -->
       <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
         :page-sizes="[10, 20, 30, 50]" layout="total, sizes, prev, pager, next" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" :disabled="loading" />
     </div>
 
-    <!-- 编辑弹窗：增加发布人选择 -->
+    <!-- 编辑弹窗：保持不变 -->
     <el-dialog v-model="dialogVisible" :title="dialogType === 'add' ? '发布公告' : '编辑公告'" width="60%"
       :close-on-click-modal="false">
       <el-form ref="noticeForm" :model="formData" :rules="rules" label-width="80px">
@@ -77,8 +108,9 @@
 
         <el-form-item label="发布人" prop="publisherId">
           <el-select v-model="formData.publisherId" placeholder="请选择发布人">
-            <el-option label="东软社区" value="4" />
-            <el-option label="东软物业" value="5" />
+            <el-option label="ADMIN" value="1001" />
+            <el-option label="东软社区" value="1002" />
+            <el-option label="东软物业" value="1003" />
           </el-select>
         </el-form-item>
 
@@ -118,12 +150,16 @@ import { ref, reactive, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getNoticeList } from '@/api/community.js'
-import { updateNotice } from '@/api/admin.js'
+import { createNotice, updateNotice,deleteNotice } from '@/api/admin.js' // 修复：补充deleteNotice导入
 import { useUserStore } from '@/stores/user.js'
 
-//模糊搜索数据和选择的状态数据
+// 搜索和状态筛选
 const searchKeyword = ref('')
 const filterStatus = ref('')
+
+// 排序参数：默认按更新时间倒序
+const sortField = ref('updateTime') // 排序字段：createTime/updateTime
+const sortOrder = ref('descending')  // 修复：Element Plus排序方向使用'ascending'/'descending'
 
 // 列表数据
 const notices = ref([])
@@ -132,22 +168,22 @@ const pageSize = ref(10)
 const total = ref(0)
 const loading = ref(false)
 
-// 表单数据：新增publisherId（发布人ID，bigint类型）
+// 表单数据
 const dialogVisible = ref(false)
 const dialogType = ref('add')
 const noticeForm = ref(null)
 const userStore = useUserStore()
 
 const formData = reactive({
-  id: '',
-  title: '',         // 标题
-  content: '',       // 内容（修复之前可能混淆的问题）
-  type: '',          // 类型（数字）
-  status: '0',       // 状态（数字）
-  publisherId: ''    // 发布人ID（4=东软社区，5=东软物业，bigint类型）
+  id: '', // 数据库原始id（用于编辑/删除）
+  title: '',
+  content: '',
+  type: '',
+  status: '0',
+  publisherId: ''
 })
 
-// 类型映射常量
+// 类型映射
 const NOTICE_TYPES = {
   1: '社区公告',
   2: '物业公告'
@@ -158,7 +194,7 @@ const STATUS_MAP = {
   2: { name: '已过期', type: 'danger' }
 }
 
-// 表单规则：增加发布人必填校验
+// 表单规则
 const rules = {
   title: [
     { required: true, message: '请输入公告标题', trigger: 'blur' },
@@ -179,30 +215,33 @@ const rules = {
   ]
 }
 
-// 加载公告列表（保持不变）
+// 加载公告列表：传递排序参数给后端
 const loadNotices = async () => {
   loading.value = true
   try {
+    // 修复：将Element的排序方向转换为后端需要的asc/desc
+    const order = sortOrder.value === 'ascending' ? 'asc' : 'desc'
     const response = await getNoticeList({
       currentPage: currentPage.value,
       pageSize: pageSize.value,
-      searchKeyword: searchKeyword.value,        // 模糊搜索
-      filterStatus: filterStatus.value          // 状态筛选
+      searchKeyword: searchKeyword.value,
+      filterStatus: filterStatus.value,
+      sortField: sortField.value, // 传递排序字段
+      sortOrder: order  // 传递转换后的排序方向
     })
     notices.value = response.data.rows || []
     total.value = response.data.total || 0
-
   } catch (error) {
     notices.value = []
     total.value = 0
     console.error('获取公告列表失败:', error)
-    ElMessage.error(error.message)
+    ElMessage.error(error.message || '获取公告列表失败')
   } finally {
     loading.value = false
   }
 }
 
-// 分页处理（保持不变）
+// 分页处理
 const handleSizeChange = (val) => {
   pageSize.value = val
   currentPage.value = 1
@@ -214,47 +253,59 @@ const handleCurrentChange = (val) => {
   loadNotices()
 }
 
-// 新增公告：重置表单
+// 新增公告
 const handleAdd = () => {
   dialogType.value = 'add'
   resetForm()
   dialogVisible.value = true
 }
 
-// 编辑公告：正确赋值标题和内容，增加发布人ID
+// 编辑公告（使用数据库id）
 const handleEdit = (row) => {
   dialogType.value = 'edit'
   Object.assign(formData, {
-    id: row.id,
+    id: row.id, // 绑定数据库原始id
     title: row.title,
     content: row.content,
-    type: String(row.type),        // 保持字符串或数字均可
+    type: String(row.type),
     status: String(row.status),
-    publisherId: String(row.publisherId)  // 后端返回的是 bigint，转为字符串
+    publisherId: String(row.publisherId)
   })
   dialogVisible.value = true
 }
-// 删除公告（保持不变）
+
+// 删除公告（使用数据库id）
 const handleDelete = async (row) => {
   try {
-    const { isConfirmed } = await ElMessageBox.confirm('确认删除该公告吗？', '提示', {
+    const  isConfirmed  = await ElMessageBox.confirm('确认删除该公告吗？', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
+
+    console.log('isConfirmed:', isConfirmed)
     if (isConfirmed) {
-      // 若有删除接口可在此调用
-      ElMessage.success('删除成功')
-      loadNotices()
+      loading.value = true
+      try {
+        await deleteNotice(row.id) // 传递数据库id给删除接口
+        ElMessage.success('删除成功')
+        loadNotices()
+      } catch (error) {
+        console.error('删除失败:', error)
+        ElMessage.error(error.message || '删除失败，请重试')
+      } finally {
+        loading.value = false
+      }
     }
   } catch (error) {
+    // 用户点击取消按钮时不显示错误信息
     if (error.name !== 'CanceledError') {
       ElMessage.error('删除失败，请重试')
     }
   }
 }
 
-// 提交表单：确保发布人ID以数字类型发送（适配bigint）
+// 提交表单（使用数据库id）
 const handleSubmit = async () => {
   if (!noticeForm.value) return
   await noticeForm.value.validate()
@@ -269,22 +320,23 @@ const handleSubmit = async () => {
 
   try {
     if (dialogType.value === 'edit') {
-      await updateNotice(submitData)
+      await updateNotice(submitData) // 编辑时携带id
       ElMessage.success('编辑成功')
     } else {
-      // 若有新增接口，同样使用submitData格式
+      await createNotice(submitData)
       ElMessage.success('发布成功')
     }
     dialogVisible.value = false
     loadNotices()
   } catch (error) {
     console.error('提交失败:', error)
-    ElMessage.error('提交失败，请重试')
+    ElMessage.error(error.message || '提交失败，请重试')
   } finally {
     loading.value = false
   }
 }
-// 重置表单：清空所有字段
+
+// 重置表单
 const resetForm = () => {
   if (noticeForm.value) {
     noticeForm.value.resetFields()
@@ -297,7 +349,22 @@ const resetForm = () => {
   formData.publisherId = ''
 }
 
-// 工具函数（保持不变）
+// 表格列头点击事件：切换排序（修复事件处理逻辑）
+const handleTableHeaderClick = (column) => {
+  // 仅处理“发布时间”和“更新时间”列的排序
+  if (column.prop === 'createTime' || column.prop === 'updateTime') {
+    // 切换排序方向（当前列排序则切换方向，其他列排序则默认倒序）
+    if (sortField.value === column.prop) {
+      sortOrder.value = sortOrder.value === 'ascending' ? 'descending' : 'ascending'
+    } else {
+      sortField.value = column.prop
+      sortOrder.value = 'ascending' // 新列默认倒序
+    }
+    loadNotices() // 重新加载数据
+  }
+}
+
+// 工具函数
 const getNoticeTypeName = (type) => {
   return NOTICE_TYPES[type] || '未知类型'
 }
@@ -328,13 +395,16 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .notice-management {
   padding: 20px;
 }
 
 .operation-bar {
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .pagination {
@@ -345,5 +415,10 @@ onMounted(() => {
 .dialog-footer {
   padding: 20px 0;
   text-align: right;
+}
+
+/* 修复：确保排序图标可点击区域 */
+:deep(.el-table__header th) {
+  cursor: pointer;
 }
 </style>

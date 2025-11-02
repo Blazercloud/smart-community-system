@@ -6,6 +6,16 @@
       <div class="header-divider"></div>
     </div>
 
+    <!-- 搜索框 -->
+    <el-input v-model="searchKeyword" placeholder="请输入标题或内容关键字" style="width: 250px; "
+      @keyup.enter="loadNotices" />
+    <el-button type="primary" @click="loadNotices" :loading="loading" style="margin-left: 20px;">
+      <el-icon>
+        <Search />
+      </el-icon>
+      查询
+    </el-button>
+
     <!-- 公告详情弹窗 -->
     <el-dialog v-model="dialogVisible" :title="currentNotice.title" width="70%" destroy-on-close>
       <div class="dialog-meta">
@@ -58,6 +68,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { getNoticeList } from '@/api/community'
 import { ElDialog } from 'element-plus'
+import { Search } from '@element-plus/icons-vue'
 
 const currentPage = ref(1)
 const pageSize = ref(5)
@@ -67,6 +78,10 @@ const dialogVisible = ref(false)
 const currentNotice = ref({})
 // 内容显示的最大字数限制
 const MAX_CONTENT_LENGTH = 150
+
+//模糊搜索数据和选择的状态数据
+const searchKeyword = ref('')
+const filterStatus = ref(1)
 
 // 日期格式化
 const formatDate = (dateStr) => {
@@ -103,12 +118,17 @@ const loadNotices = async () => {
   try {
     const res = await getNoticeList({
       currentPage: currentPage.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      searchKeyword: searchKeyword.value,        // 模糊搜索
+      filterStatus: filterStatus.value
     })
-    notices.value = res.data.rows
-    total.value = res.data.total
+    notices.value = res.data.rows || []
+    total.value = res.data.total || 0
   } catch (error) {
-    console.error('加载公告失败:', error)
+    notices.value = []
+    total.value = 0
+    console.error('获取公告列表失败:', error)
+    ElMessage.error(error.message)
   }
 }
 
@@ -149,6 +169,7 @@ onMounted(() => {
 .notice-list {
   display: grid;
   gap: 25px;
+  margin-top: 20px;
 }
 
 /* 公告卡片 */

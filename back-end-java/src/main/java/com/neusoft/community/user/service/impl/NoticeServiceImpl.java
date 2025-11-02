@@ -14,7 +14,9 @@ import com.neusoft.community.user.mapper.NoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author hui
@@ -32,7 +34,10 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
         Integer currentPage,
         Integer pageSize,
         String searchKeyword,
-        Integer filterStatus) {
+        Integer filterStatus,
+        // 新增排序参数
+        String sortField,
+        String sortOrder) {
 
     // 1. 参数校验
     if (currentPage == null || currentPage < 1) {
@@ -44,13 +49,33 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
     //设置分页参数
     Page<NoticeVO> page = new Page<>(currentPage, pageSize);
 
-
-
     QueryWrapper<Notice> wrapper = new QueryWrapper<>();
-    wrapper.like(StringUtils.isNotBlank(searchKeyword), "n.content", searchKeyword)
-            .or()
-            .like(StringUtils.isNotBlank(searchKeyword), "n.title", searchKeyword)
-            .eq(filterStatus != null, "n.status", filterStatus);
+// 关键：仅当 searchKeyword 非空时，才添加模糊查询条件（OR 关系 + 括号包裹）
+    if (StringUtils.isNotBlank(searchKeyword)) {
+        wrapper.and(qw -> qw.like("n.content", searchKeyword).or().like("n.title", searchKeyword));
+    }
+// 拼接 status 条件（默认 AND 关系，空值时自动忽略）
+    wrapper.eq(filterStatus != null, "n.status", filterStatus);
+
+
+    // 4. 新增：处理排序逻辑
+    // 映射前端字段到数据库字段（避免直接使用前端传递的字段名，防止SQL注入）
+    Map<String, String> fieldMap = new HashMap<>();
+    fieldMap.put("createTime", "n.create_time");  // 发布时间（数据库字段）
+    fieldMap.put("updateTime", "n.update_time");  // 更新时间（数据库字段）
+
+    // 默认排序字段：updateTime
+    String dbField = fieldMap.getOrDefault(sortField, "n.update_time");
+    // 默认排序方向：desc（降序，最新的在前）
+    boolean isAsc = "asc".equalsIgnoreCase(sortOrder);
+
+    // 添加排序条件
+    if (isAsc) {
+        wrapper.orderByAsc(dbField);
+    } else {
+        wrapper.orderByDesc(dbField);
+    }
+
     // 2. 再执行查询（传入构建好的条件）
     IPage<NoticeVO> noticeVOPage = noticeMapper.selectNoticeVOPage(page, wrapper);  // 这里传入queryWrapper
 
@@ -77,6 +102,16 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
     @Override
     public Result<Void> updateNotice(Notice notice) {
         return this.updateById( notice)? Result.success("更新成功") : Result.fail("更新失败");
+    }
+
+    @Override
+    public Result<Void> createNotice(Notice notice) {
+        return this.save( notice)? Result.success("创建成功") : Result.fail("创建失败");
+    }
+
+    @Override
+    public Result<Void> deleteNotice(Integer id) {
+        return this.removeById(id)? Result.success("删除成功") : Result.fail("删除失败");
     }
 }
 

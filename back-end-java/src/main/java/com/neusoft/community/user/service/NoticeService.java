@@ -14,7 +14,12 @@ import java.util.List;
 * @createDate 2025-10-29 17:35:58
 */
 public interface NoticeService extends IService<Notice> {
-  Result <PageResult<List<NoticeVO>>> getNoticeList(Integer currentPage, Integer pageSize, String searchKeyword, Integer filterStatus);
+  Result <PageResult<List<NoticeVO>>> getNoticeList(Integer currentPage, Integer pageSize, String searchKeyword, Integer filterStatus,// 新增排序参数
+            String sortField, String sortOrder);
 
     Result<Void> updateNotice(Notice notice);
+
+    Result<Void> createNotice(Notice notice);
+
+  Result<Void> deleteNotice(Integer id);
 }
