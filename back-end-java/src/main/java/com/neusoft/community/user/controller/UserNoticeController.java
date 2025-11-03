@@ -39,7 +39,7 @@ public Result<PageResult<List<NoticeVO>>> getUserNoticeList(
         @RequestParam(required = false) Integer filterStatus,
         // 新增：排序字段（createTime/updateTime）和排序方向（asc/desc）
         @RequestParam(required = false, defaultValue = "updateTime") String sortField,
-        @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
 
     return this.noticeService.getNoticeList(currentPage, pageSize, searchKeyword, filterStatus, sortField, sortOrder);
 }

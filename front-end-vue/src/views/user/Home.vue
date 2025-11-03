@@ -39,6 +39,7 @@
     <el-menu-item index="/user/community/service">便民服务</el-menu-item>
     <el-menu-item index="/user/community/repair">报修管理</el-menu-item>
     <el-menu-item index="/user/community/Notice">公告通知</el-menu-item>
+    <el-menu-item index="/user/community/parkspace">车位管理</el-menu-item>
   </el-sub-menu>
 
   <!-- 订单与购物二级菜单 -->

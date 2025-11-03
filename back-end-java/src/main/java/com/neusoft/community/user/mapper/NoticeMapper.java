@@ -27,13 +27,5 @@ public interface NoticeMapper extends BaseMapper<Notice> {
             "LEFT JOIN admin a ON n.publisher_id = a.id "+
             "${ew.customSqlSegment}"
     )
-    IPage<NoticeVO> selectNoticeVOPage(
-            Page<NoticeVO> page,
-            @Param(Constants.WRAPPER) QueryWrapper<Notice> queryWrapper
-    );
-
+    IPage<NoticeVO> selectNoticeVOPage(Page<Notice> page, @Param(Constants.WRAPPER) QueryWrapper<Notice> queryWrapper);
 }
-
-
-
-

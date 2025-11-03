@@ -50,6 +50,9 @@ public class Result<T> {
     public static <T> Result<T> fail(String message) {
         return new Result<>(500, message, null);
     }
+    public static <T> Result<T> fail() {
+        return new Result<>(500, "fail", null);
+    }
 
     /**
      * 失败响应（自定义状态码）

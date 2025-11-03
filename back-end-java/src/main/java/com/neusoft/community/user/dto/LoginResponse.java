@@ -8,6 +8,9 @@ import com.neusoft.community.user.entity.User;
 public class LoginResponse {
     private String token;
 
+    @JsonProperty("id")
+    private Long id;
+
     @JsonProperty("username")
     private String username;
 
@@ -31,6 +34,7 @@ public class LoginResponse {
 
     public LoginResponse(String token, User user) {
         this.token = token;
+        this.id=user.getId();
         this.username = user.getUsername();
         this.phone = user.getPhone();
         this.email = user.getEmail();

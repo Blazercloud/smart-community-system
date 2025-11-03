@@ -20,7 +20,7 @@
     <el-dialog v-model="dialogVisible" :title="currentNotice.title" width="70%" destroy-on-close>
       <div class="dialog-meta">
         <span class="meta-item time">
-          <i class="icon-time"></i> {{ formatDate(currentNotice.createTime) }}
+          <i class="icon-time"></i> {{ formatDate(currentNotice.updateTime) }}
         </span>
         <span class="meta-item publisher">
           <i class="icon-user"></i> {{ currentNotice.publisherName }}
@@ -38,7 +38,7 @@
         </div>
         <div class="card-meta">
           <span class="meta-item time">
-            <i class="icon-time"></i> {{ formatDate(notice.createTime) }}
+            <i class="icon-time"></i> {{ formatDate(notice.updateTime) }}
           </span>
           <span class="meta-item publisher">
             <i class="icon-user"></i> {{ notice.publisherName }}

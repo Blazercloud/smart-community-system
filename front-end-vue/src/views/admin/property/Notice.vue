@@ -13,7 +13,7 @@
         @keyup.enter="loadNotices" />
 
       <!-- 状态筛选 -->
-      <el-select v-model="filterStatus" placeholder="请选择状态" style="width: 150px; margin-left: 20px;">
+      <el-select v-model="filterStatus" placeholder="请选择状态" style="width: 150px; margin-left: 20px;" @change="loadNotices">
         <el-option label="全部" value="" />
         <el-option label="草稿" value="0" />
         <el-option label="已发布" value="1" />
@@ -32,7 +32,6 @@
       style="width: 100%" 
       :loading="loading" 
       @header-click="handleTableHeaderClick"
-      :default-sort="{ prop: sortField, order: sortOrder }"
     >
       <!-- 连续序号列 -->
       <el-table-column label="序号" width="80">

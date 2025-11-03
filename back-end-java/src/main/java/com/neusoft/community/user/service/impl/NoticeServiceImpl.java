@@ -47,7 +47,7 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
         pageSize = 10;
     }
     //设置分页参数
-    Page<NoticeVO> page = new Page<>(currentPage, pageSize);
+    Page<Notice> page = new Page<>(currentPage, pageSize);
 
     QueryWrapper<Notice> wrapper = new QueryWrapper<>();
 // 关键：仅当 searchKeyword 非空时，才添加模糊查询条件（OR 关系 + 括号包裹）
@@ -101,7 +101,7 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
 
     @Override
     public Result<Void> updateNotice(Notice notice) {
-        return this.updateById( notice)? Result.success("更新成功") : Result.fail("更新失败");
+        return this.updateById(notice)? Result.success("更新成功") : Result.fail("更新失败");
     }
 
     @Override

@@ -50,6 +50,7 @@ public class UserController {
     /**
      * 获取当前用户信息
      */
+    @NoAuth
     @GetMapping("/user/info")
     public Result<User> getUserInfo(@RequestAttribute("userId") Long userId) {
         // userId 已由拦截器放入请求属性

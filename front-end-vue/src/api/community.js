@@ -18,13 +18,24 @@ export function registerVisitor(data) {
   })
 }
 
-// 车位管理
-export function getParkingInfo() {
+// 车位申请
+export function createParkSpaceApplication(data) {
   return request({
-    url: '/community/parking/info',
-    method: 'get'
+    url: '/user/park/application',
+    method: 'post',
+    data
   })
 }
+
+//车位查看
+export function getParkingInfo(id) {
+  return request({
+    url: '/community/parking/info', 
+    method: 'get',
+    params:{id}
+  })
+}
+
 
 export function bindParkingLicense(data) {
   return request({

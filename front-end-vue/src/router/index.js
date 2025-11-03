@@ -68,6 +68,16 @@ const routes = [
         component: () => import('../views/user/community/Notice.vue')
       },
       {
+        path: 'community/parkspace',
+        name: 'ParkSpace',
+        component: () => import('../views/user/community/ParkSpace.vue')
+      },
+      {
+        path: 'community/parking/apply',
+        name: 'ParkingApply',
+        component: () => import('../views/user/community/ParkApply.vue')
+      },
+      {
         path: 'mall/home',
         name: 'UserMall',
         component: () => import('../views/user/mall/Home.vue')

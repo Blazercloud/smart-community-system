@@ -60,7 +60,7 @@
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card @click="goTo('/user/community/notices')" class="service-card">
+          <el-card @click="goTo('/user/community/notice')" class="service-card">
             <h4>查看公告</h4>
           </el-card>
         </el-col>
@@ -87,6 +87,9 @@ const latestNotices = ref([
   { id: 2, date: '2025-10-28', title: '安全提示', content: '请注意夜间门禁安全' },
   { id: 3, date: '2025-10-27', title: '停车通知', content: '车位维护时间提前至周五' }
 ])
+
+
+
 
 const goTo = (path) => {
   router.push(path)

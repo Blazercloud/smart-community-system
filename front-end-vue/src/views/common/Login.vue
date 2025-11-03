@@ -143,7 +143,7 @@ const handleUserLogin = async () => {
       try {
         const res = await login(userForm.value)
         userStore.setToken(res.data.token)
-        userStore.setUserInfo({ id: res.data.userId, phone: res.data.phone, name: res.data.name })
+        userStore.setUserInfo({ id: res.data.id, phone: res.data.phone, name: res.data.username })
         ElMessage.success('登录成功')
         router.push('/user/home')
       } catch (error) {
