@@ -4,17 +4,17 @@ import com.neusoft.community.common.Result;
 import com.neusoft.community.common.annotation.NoAuth;
 import com.neusoft.community.user.dto.LoginDTO;
 import com.neusoft.community.user.dto.LoginResponse;
-import jakarta.validation.Valid;
 import com.neusoft.community.user.dto.RegisterDTO;
 import com.neusoft.community.user.entity.User;
 import com.neusoft.community.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户控制器
- * 
+ *
  * @author Neusoft
  */
 @Slf4j
@@ -29,9 +29,9 @@ public class UserController {
      * 用户注册
      */
     @NoAuth
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public Result<LoginResponse> register(@RequestBody RegisterDTO registerDTO) {
-        log.info("用户注册请求：{}", registerDTO.getPhone());
+        log.info("【用户注册】手机号: {}", registerDTO.getPhone());
         LoginResponse result = userService.register(registerDTO);
         return Result.success(result);
     }
@@ -41,19 +41,28 @@ public class UserController {
      */
     @NoAuth
     @PostMapping("/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginDTO loginDTO) {
-        log.info("用户登录请求：{}", loginDTO.getPhone());
+    public Result<?> login(@Valid @RequestBody LoginDTO loginDTO) {
+        log.info("【用户登录】手机号: {}", loginDTO.getPhone());
+
         LoginResponse result = userService.login(loginDTO);
-        return Result.success(result);
+
+
+        // ✅ 直接从 LoginResponse 获取用户ID和用户名
+        return Result.success(
+                new java.util.HashMap<String, Object>() {{
+                    put("token", result.getToken());
+                    put("userId", result.getId());
+                    put("phone", result.getPhone());
+                    put("name", result.getUsername());
+                }}
+        );
     }
 
     /**
      * 获取当前用户信息
      */
-    @NoAuth
-    @GetMapping("/user/info")
-    public Result<User> getUserInfo(@RequestAttribute("userId") Long userId) {
-        // userId 已由拦截器放入请求属性
+    @GetMapping("/info")
+    public Result<User> getUserInfo(@RequestAttribute(value = "userId", required = false) Long userId) {
         if (userId == null) {
             return Result.fail("Unauthorized");
         }
@@ -61,4 +70,3 @@ public class UserController {
         return Result.success(user);
     }
 }
-

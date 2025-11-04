@@ -66,7 +66,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { login } from '../../api/user.js'
 import { adminLogin } from '../../api/admin.js'
-import { merchantLogin } from '../../api/shop.js'
+// import { merchantLogin } from '../../api/merchant.js'
 import { useUserStore } from '../../stores/user.js'
 import { useMerchantStore } from '../../stores/merchant.js'
 
@@ -142,17 +142,27 @@ const handleUserLogin = async () => {
     if (valid) {
       try {
         const res = await login(userForm.value)
-        userStore.setToken(res.data.token)
-        userStore.setUserInfo({ id: res.data.id, phone: res.data.phone, name: res.data.username })
+
+        // 解包兼容多种后端返回格式
+        const data = res.data || {}
+        const user = data.user || {}
+
+        userStore.setToken(data.token)
+        userStore.setUserInfo({
+          id: data.userId || user.id,
+          phone: data.phone || user.phone,
+          name: data.name || user.name
+        })
+
         ElMessage.success('登录成功')
         router.push('/user/home')
       } catch (error) {
-        // Show server error message when available for better feedback
         ElMessage.error(error?.message || '登录失败')
       }
     }
   })
 }
+
 
 const handleAdminLogin = async () => {
   if (!adminFormRef.value) return

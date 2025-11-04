@@ -7,10 +7,7 @@ import com.neusoft.community.admin.vo.ParkingSpaceVO;
 import com.neusoft.community.common.PageResult;
 import com.neusoft.community.common.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,12 +17,51 @@ import java.util.List;
 public class ParkSpaceController {
     @Autowired
     private ParkingSpaceService ParkingSpaceService;
-
     @GetMapping("/info")
+
     public Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) Integer id){
         return ParkingSpaceService.getParkingInfo(currentPage, pageSize, id);
+    }
+    
+    /**
+     * 更新车位信息
+     */
+    @PutMapping
+    public Result<String> updateParkingSpace(@RequestBody ParkingSpace parkingSpace) {
+        boolean success = ParkingSpaceService.updateById(parkingSpace);
+        if (success) {
+            return Result.success("车位信息更新成功");
+        } else {
+            return Result.fail("车位信息更新失败");
+        }
+    }
+    
+    /**
+     * 添加车位
+     */
+    @PostMapping
+    public Result<String> addParkingSpace(@RequestBody ParkingSpace parkingSpace) {
+        boolean success = ParkingSpaceService.save(parkingSpace);
+        if (success) {
+            return Result.success("车位添加成功");
+        } else {
+            return Result.fail("车位添加失败");
+        }
+    }
+    
+    /**
+     * 删除车位
+     */
+    @DeleteMapping("/{id}")
+    public Result<String> deleteParkingSpace(@PathVariable Integer id) {
+        boolean success = ParkingSpaceService.removeById(id);
+        if (success) {
+            return Result.success("车位删除成功");
+        } else {
+            return Result.fail("车位删除失败");
+        }
     }
 }

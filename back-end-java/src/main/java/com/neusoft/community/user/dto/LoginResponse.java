@@ -41,7 +41,6 @@ public class LoginResponse {
         this.roomNumber = user.getRoomNumber();
         this.houseType = user.getHouseType();
 
-        // ✅ 这里根据 user 中类型决定
         if (user.getCreateTime() != null) {
             this.createTime = user.getCreateTime().toString();
         }

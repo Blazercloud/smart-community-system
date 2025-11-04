@@ -5,6 +5,7 @@ import com.neusoft.community.common.annotation.NoAuth;
 import com.neusoft.community.user.entity.ParkingApplication;
 import com.neusoft.community.user.service.ParkingApplicationService;
 import io.lettuce.core.dynamic.annotation.Param;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,10 @@ public class UserParkApplicationController {
     @Autowired
     ParkingApplicationService ParkingApplicationService;
 
+    @NoAuth
+
     @PostMapping
+    @Operation(summary = "用户创建停车申请")
     public Result<Void> createParkApplication(@RequestBody ParkingApplication parkingApplication){
         parkingApplication.setStatus("0");
 
@@ -29,6 +33,7 @@ public class UserParkApplicationController {
 
 
     @NoAuth
+    @Operation(summary = "获取用户停车申请")
     @GetMapping
     public Result<List<ParkingApplication>> getParkingApplication(@Param("userId") Integer userId){
         return ParkingApplicationService.getParkingApplication(userId);

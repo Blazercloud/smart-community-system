@@ -111,7 +111,7 @@ const routes = [
       },
       {
         path: 'property/parkingspaces',
-        name: 'AdminparkingSpaces',
+        name: 'AdminParkingSpaces',
         component: () => import('../views/admin/property/Parkingspaces.vue')
       },
       {

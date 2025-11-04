@@ -39,71 +39,50 @@ export const deleteNotice = (id) => {
     })
 }
 
+// 车位管理相关API
+export function getParkingSpaces(params) {
+  return request({
+    url: '/community/parking/info',
+    method: 'get',
+    params
+  })
+}
 
-// export function getVisitors(params) {
-//   return request({
-//     url:'/admin/property/visitors',
-//     method:'get',
-//     params
-//   }) 
-// }
-// export function createVisitor(data) {
-//   return request({
-//     url:'/admin/property/visitors',
-//     method:'post',
-//     data
-//   }) 
-// }
-// export function updateVisitor(id, data) {
-//   return request({
-//     url:`/admin/property/visitors/${id}`,
-//     method:'put',
-//     data
-//   }) 
-// }
-// export function deleteVisitor(id) {
-//   return request({
-//     url:`/admin/property/visitors/${id}`,
-//     method:'delete'
-//   }) 
-// }
-// export function getComplaints(params) {
-//   return request({
-//     url:'/admin/property/complaints',
-//     method:'get',
-//     params
-//   }) 
-// }
-// export function updateComplaint(id, data) {
-//   return request({
-//     url:`/admin/property/complaints/${id}`,
-//     method:'put',
-//     data
-//   }) 
-// }
-// export function deleteComplaint(id) {
-//   return request({
-//     url:`/admin/property/complaints/${id}`,
-//     method:'delete'
-//   }) 
-// }
-// export function getRepairs(params) {
-//   return request({
-//     url:'/admin/property/repairs',
-//     method:'get',
-//     params
-//   }) 
-// }
-// export function updateRepair(id, data) {
-//   return request({
-//     url:`/admin/property/repairs/${id}`,
-//     method:'put',
-//     data
-//   }) 
-// } 
-// export function deleteRepair(id) {
-//   return request({
-//     url:`/admin/property/repairs/${id}`,
-//     method:'delete'
-//   }) 
-// }
+export function updateParkingSpace(data) {
+  return request({
+    url: '/community/parking',
+    method: 'put',
+    data
+  })
+}
+
+export function addParkingSpace(data) {
+  return request({
+    url: '/community/parking',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteParkingSpace(id) {
+  return request({
+    url: `/community/parking/${id}`,
+    method: 'delete'
+  })
+}
+
+// 停车申请管理相关API
+export function getParkingApplications() {
+  return request({
+    url: '/admin/parking/application',
+    method: 'get'
+  })
+}
+
+export function updateParkingApplicationStatus(id, data) {
+  return request({
+    url: `/admin/parking/application/${id}`,
+    method: 'put',
+    data
+  })
+}

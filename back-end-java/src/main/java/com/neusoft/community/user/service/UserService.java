@@ -54,9 +54,9 @@ public class UserService {
         user.setStatus(1);
         user.setCreateTime(LocalDateTime.now());
 
-        userMapper.insert(user);
-
         // 生成 JWT token
+
+        userMapper.insert(user);
         String token = jwtUtil.generateToken(user.getPhone().toString(), "USER");
 
         return new LoginResponse(token, user);
