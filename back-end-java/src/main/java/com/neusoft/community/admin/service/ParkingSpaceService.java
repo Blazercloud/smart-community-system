@@ -15,5 +15,5 @@ import java.util.List;
 */
 public interface ParkingSpaceService extends IService<ParkingSpace> {
 
-     Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Integer id) ;
+     Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Integer id, String carNumber) ;
 }

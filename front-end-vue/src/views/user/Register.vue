@@ -17,8 +17,8 @@
         <el-form-item label="确认密码" prop="confirmPassword">
           <el-input v-model="form.confirmPassword" type="password" placeholder="请再次输入密码" />
         </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入真实姓名" />
+        <el-form-item label="姓名" prop="username">
+          <el-input v-model="form.username" placeholder="请输入真实姓名" />
         </el-form-item>
         <el-form-item label="居住地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入详细地址" />
@@ -47,7 +47,7 @@ const form = ref({
   phone: '',
   password: '',
   confirmPassword: '',
-  name: '',
+  username: '',
   address: ''
 })
 

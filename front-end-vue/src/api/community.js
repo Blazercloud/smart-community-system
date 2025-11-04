@@ -27,21 +27,12 @@ export function createParkSpaceApplication(data) {
   })
 }
 
-//车位查看
-export function getParkingInfo(id) {
+// 用户车位申请查询
+export function getParkSpaceApplication(params) {
   return request({
-    url: '/community/parking/info', 
+    url: '/user/park/application',
     method: 'get',
-    params:{id}
-  })
-}
-
-
-export function bindParkingLicense(data) {
-  return request({
-    url: '/community/parking/bind',
-    method: 'post',
-    data
+    params
   })
 }
 

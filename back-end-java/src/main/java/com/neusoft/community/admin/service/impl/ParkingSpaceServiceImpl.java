@@ -31,14 +31,19 @@ public class ParkingSpaceServiceImpl extends ServiceImpl<ParkingSpaceMapper, Par
 
 
     @Override
-    public Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Integer id) {
+    public Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Integer id, String carNumber) {
         // 创建分页对象
         Page<ParkingSpace> page = new Page<>(currentPage, pageSize);
         QueryWrapper<ParkingSpace> wrapper = new QueryWrapper<>();
         
-        // 添加ownerId查询条件（仅当owernId不为null时）
+        // 添加ownerId查询条件（仅当ownerId不为null时）
         if (id != null) {
             wrapper.eq("owner_id", id);
+        }
+        
+        // 添加车牌号模糊查询条件（仅当carNumber不为null时）
+        if (carNumber != null && !carNumber.isEmpty()) {
+            wrapper.like("car_number", carNumber);
         }
         
         // 执行分页查询

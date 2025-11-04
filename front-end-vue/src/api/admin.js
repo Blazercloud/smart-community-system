@@ -71,11 +71,12 @@ export function deleteParkingSpace(id) {
   })
 }
 
-// 停车申请管理相关API
-export function getParkingApplications() {
+//管理员获取申请信息
+export function getParkingApplications(params) {
   return request({
     url: '/admin/parking/application',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 

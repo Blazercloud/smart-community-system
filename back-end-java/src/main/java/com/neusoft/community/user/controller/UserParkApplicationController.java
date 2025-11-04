@@ -22,7 +22,6 @@ public class UserParkApplicationController {
     ParkingApplicationService ParkingApplicationService;
 
     @NoAuth
-
     @PostMapping
     @Operation(summary = "用户创建停车申请")
     public Result<Void> createParkApplication(@RequestBody ParkingApplication parkingApplication){
@@ -35,7 +34,7 @@ public class UserParkApplicationController {
     @NoAuth
     @Operation(summary = "获取用户停车申请")
     @GetMapping
-    public Result<List<ParkingApplication>> getParkingApplication(@Param("userId") Integer userId){
+    public Result<List<ParkingApplication>> getParkingApplication(@Param("Id") Integer userId){
         return ParkingApplicationService.getParkingApplication(userId);
     }
 

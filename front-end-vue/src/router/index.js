@@ -78,6 +78,11 @@ const routes = [
         component: () => import('../views/user/community/ParkApply.vue')
       },
       {
+        path: 'community/parking/apply/manage',
+        name: 'ParkingApplyManagement',
+        component: () => import('../views/user/community/ParkApplyManagement.vue')
+      },
+      {
         path: 'mall/home',
         name: 'UserMall',
         component: () => import('../views/user/mall/Home.vue')

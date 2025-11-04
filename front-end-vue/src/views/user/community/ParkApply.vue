@@ -1,7 +1,12 @@
 <template>
-  <div class="parking-apply">
-    <h2>车位申请</h2>
-    <el-card>
+  <div class="parking-apply-dialog">
+    <el-dialog
+      v-model="dialogVisible"
+      title="车位申请"
+      width="600px"
+      :close-on-click-modal="false"
+      @close="handleClose"
+    >
       <el-form 
         :model="applyForm" 
         ref="applyFormRef" 
@@ -21,20 +26,14 @@
             placeholder="请输入车牌号（如：粤A12345）"
           />
         </el-form-item>
-        <el-form-item label="申请说明" prop="applyContent">
-          <el-input 
-            v-model="applyForm.applyContent" 
-            type="textarea" 
-            rows="3"
-            placeholder="请填写申请原因（可选）"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitApply">提交申请</el-button>
-          <el-button @click="resetForm">重置</el-button>
-        </el-form-item>
       </el-form>
-    </el-card>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleClose">取消</el-button>
+          <el-button type="primary" @click="submitApply">提交申请</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -50,16 +49,18 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
+// 对话框显示控制
+const dialogVisible = ref(true)
+
 // 表单数据
 const applyForm = ref({
-  userId: userStore.userInfo.id, // 当前登录用户ID（从store获取）
+  userId: userStore.userInfo?.id, // 当前登录用户ID（从store获取）
   spaceNumber: '', // 车位编号（从列表页跳转时携带）
   carNumber: '', // 车牌号
-  applyContent: '' // 申请说明
 })
 
 // 表单验证规则
-const rules = ref({
+const rules = {
   spaceNumber: [
     { required: true, message: '请选择车位', trigger: 'blur' }
   ],
@@ -67,7 +68,7 @@ const rules = ref({
     { required: true, message: '请输入车牌号', trigger: 'blur' },
     { pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{5}$/, message: '车牌号格式错误（如：粤A12345）', trigger: 'blur' }
   ]
-})
+}
 
 // 表单引用
 const applyFormRef = ref(null)
@@ -89,7 +90,9 @@ const submitApply = async () => {
     const res = await createParkSpaceApplication(applyForm.value)
     if (res.code === 200) {
       ElMessage.success('申请提交成功，等待审批')
-      router.push('/user/community/parkspace') // 提交后返回列表页
+      handleClose()
+      // 返回车位列表页
+      router.push('/user/community/parkspace')
     } else {
       ElMessage.error(res.message || '申请提交失败')
     }
@@ -99,15 +102,22 @@ const submitApply = async () => {
   }
 }
 
-// 重置表单
-const resetForm = () => {
-  applyFormRef.value.resetFields()
+// 关闭对话框
+const handleClose = () => {
+  dialogVisible.value = false
+  // 返回车位列表页
+  router.push('/user/community/parkspace')
 }
 </script>
 
 <style scoped>
-.parking-apply {
-  max-width: 800px;
-  margin: 0 auto;
+.parking-apply-dialog {
+  width: 100%;
+  height: 100%;
+}
+
+.dialog-footer {
+  padding: 20px 0;
+  text-align: right;
 }
 </style>

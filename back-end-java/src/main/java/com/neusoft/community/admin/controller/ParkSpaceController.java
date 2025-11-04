@@ -17,13 +17,17 @@ import java.util.List;
 public class ParkSpaceController {
     @Autowired
     private ParkingSpaceService ParkingSpaceService;
+    
+    /**
+     * 分页查询车位信息，支持根据车主ID和车牌号模糊查询
+     */
     @GetMapping("/info")
-
     public Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Integer id){
-        return ParkingSpaceService.getParkingInfo(currentPage, pageSize, id);
+            @RequestParam(required = false) Integer id,
+            @RequestParam(required = false) String carNumber){
+        return ParkingSpaceService.getParkingInfo(currentPage, pageSize, id, carNumber);
     }
     
     /**

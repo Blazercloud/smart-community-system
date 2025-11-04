@@ -1,34 +1,23 @@
 <template>
   <div class="parking-space-management">
     <!-- 操作栏：与公告页面保持一致的布局和间距 -->
-    <div class="operation-bar">
-      <el-button
-          type="primary"
-          @click="handleAddParkingSpace"
-          :loading="loading"
-      >
-        <el-icon><Plus /></el-icon>
+    <div class="operation-bar" v-if="activeTab === 'parkingSpaces'">
+      <el-button type="primary" @click="handleAddParkingSpace" :loading="loading">
+        <el-icon>
+          <Plus />
+        </el-icon>
         添加车位
       </el-button>
 
       <!-- 搜索框：调整宽度和间距，与公告页面统一 -->
-      <el-input
-          v-model="searchKeyword"
-          placeholder="请输入车位编号或车牌号"
-          style="width: 250px; margin-left: 20px;"
-          clearable
-          @clear="loadParkingSpaces"
-          @keyup.enter="loadParkingSpaces"
-      />
+      <el-input v-model="searchKeyword" placeholder="请输入车牌号搜索" style="width: 250px; margin-left: 20px;" clearable
+        @clear="loadParkingSpaces" @keyup.enter="loadParkingSpaces" />
 
       <!-- 查询按钮：与公告页面样式统一 -->
-      <el-button
-          type="primary"
-          @click="loadParkingSpaces"
-          :loading="loading"
-          style="margin-left: 20px;"
-      >
-        <el-icon><Search /></el-icon>
+      <el-button type="primary" @click="loadParkingSpaces" :loading="loading" style="margin-left: 20px;">
+        <el-icon>
+          <Search />
+        </el-icon>
         查询
       </el-button>
     </div>
@@ -39,22 +28,16 @@
       <el-tab-pane label="车位管理" name="parkingSpaces">
         <div class="table-container">
           <!-- 表格：添加序号列，与公告页面保持一致 -->
-          <el-table
-              :data="parkingSpaces"
-              border
-              v-loading="loading"
-              style="width: 100%;"
-              :row-class-name="tableRowClassName"
-          >
+          <el-table :data="parkingSpaces" border v-loading="loading" style="width: 100%;"
+            :row-class-name="tableRowClassName">
             <!-- 连续序号列 -->
-            <el-table-column label="序号" width="80">
+            <el-table-column label="序号" width="60">
               <template #default="{ $index }">
                 {{ (currentPage - 1) * pageSize + $index + 1 }}
               </template>
             </el-table-column>
 
-            <el-table-column prop="id" label="ID" width="80" align="center" />
-            <el-table-column prop="spaceNumber" label="车位编号" width="120" align="center">
+            <el-table-column prop="spaceNumber" label="车位编号" width="150" align="center">
               <template #default="scope">
                 <el-tag type="primary">{{ scope.row.spaceNumber }}</el-tag>
               </template>
@@ -62,31 +45,19 @@
             <el-table-column prop="status" label="状态" width="120" align="center">
               <template #default="scope">
                 <!-- 状态标签样式与公告页面统一 -->
-                <el-tag
-                    :type="scope.row.status === '空闲' ? 'success' : 'warning'"
-                >
+                <el-tag :type="scope.row.status === '空闲' ? 'success' : 'warning'">
                   {{ scope.row.status }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="userName" label="车主" width="120" align="center" />
+            <el-table-column prop="userName" label="车主" width="300" align="center" />
             <el-table-column prop="carNumber" label="车牌号" width="120" align="center" />
             <el-table-column label="操作" width="200" fixed="right">
               <template #default="scope">
-                <el-button
-                    link
-                    type="primary"
-                    @click="handleEdit(scope.row)"
-                    :loading="loading"
-                >
+                <el-button link type="primary" @click="handleEdit(scope.row)" :loading="loading">
                   编辑
                 </el-button>
-                <el-button
-                    link
-                    type="danger"
-                    @click="handleDelete(scope.row)"
-                    :loading="loading"
-                >
+                <el-button link type="danger" @click="handleDelete(scope.row)" :loading="loading">
                   删除
                 </el-button>
               </template>
@@ -95,40 +66,27 @@
 
           <!-- 分页：与公告页面布局一致（去掉jumper） -->
           <div class="pagination">
-            <el-pagination
-                v-model:current-page="currentPage"
-                v-model:page-size="pageSize"
-                :total="total"
-                :page-sizes="[10, 20, 30, 50]"
-                layout="total, sizes, prev, pager, next"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :disabled="loading"
-            />
+            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="total"
+              :page-sizes="[10, 20, 30, 50]" layout="total, sizes, prev, pager, next" @size-change="handleSizeChange"
+              @current-change="handleCurrentChange" :disabled="loading" />
           </div>
         </div>
+        
       </el-tab-pane>
 
-     <!-- 申请管理标签页 -->
+      <!-- 申请管理标签页 -->
       <el-tab-pane label="申请管理" name="applications">
         <div class="table-container">
-          <el-table 
-            :data="applications" 
-            border 
-            v-loading="loading"
-            style="width: 100%;"
-            :row-class-name="tableRowClassName"
-          >
-            <el-table-column label="序号" width="80">
+          <el-table :data="applications" border v-loading="loading" style="width: 100%;"
+            :row-class-name="tableRowClassName">
+            <el-table-column label="序号" width="60">
               <template #default="{ $index }">
                 {{ (appCurrentPage - 1) * appPageSize + $index + 1 }}
               </template>
             </el-table-column>
-            
-            <el-table-column prop="id" label="申请ID" width="80" align="center" />
-            <el-table-column prop="userId" label="用户ID" width="80" align="center" />
-            <el-table-column prop="username" label="用户名" width="120" align="center" />
-            <el-table-column prop="spaceNumber" label="车位编号" width="120" align="center">
+
+            <el-table-column prop="username" label="用户名" width="300" align="center" />
+            <el-table-column prop="spaceNumber" label="车位编号" width="150" align="center">
               <template #default="scope">
                 <el-tag type="primary">{{ scope.row.spaceNumber }}</el-tag>
               </template>
@@ -142,29 +100,19 @@
                 <el-tag v-else>{{ scope.row.status }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="applyTime" label="申请时间" width="180" align="center">
+            <el-table-column prop="applyTime" label="申请时间" width="220" align="center">
               <template #default="scope">
                 {{ formatTime(scope.row.applyTime) }}
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="200" fixed="right">
+            <el-table-column label="操作" width="150" fixed="right">
               <template #default="scope">
-                <el-button 
-                  link 
-                  type="success" 
-                  :disabled="scope.row.status !== '0'"
-                  @click="handleApprove(scope.row)"
-                  :loading="loading"
-                >
+                <el-button link type="success" :disabled="scope.row.status !== '0'" @click="handleApprove(scope.row)"
+                  :loading="loading">
                   同意
                 </el-button>
-                <el-button 
-                  link 
-                  type="danger" 
-                  :disabled="scope.row.status !== '0'"
-                  @click="handleReject(scope.row)"
-                  :loading="loading"
-                >
+                <el-button link type="danger" :disabled="scope.row.status !== '0'" @click="handleReject(scope.row)"
+                  :loading="loading">
                   退回
                 </el-button>
               </template>
@@ -172,35 +120,18 @@
           </el-table>
 
           <div class="pagination">
-            <el-pagination 
-              v-model:current-page="appCurrentPage" 
-              v-model:page-size="appPageSize" 
-              :total="appTotal"
-              :page-sizes="[10, 20, 30, 50]" 
-              layout="total, sizes, prev, pager, next" 
-              @size-change="handleAppSizeChange"
-              @current-change="handleAppCurrentChange" 
-              :disabled="loading"
-            />
+            <el-pagination v-model:current-page="appCurrentPage" v-model:page-size="appPageSize" :total="appTotal"
+              :page-sizes="[10, 20, 30, 50]" layout="total, sizes, prev, pager, next" @size-change="handleAppSizeChange"
+              @current-change="handleAppCurrentChange" :disabled="loading" />
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
 
     <!-- 车位编辑对话框：调整宽度和样式，与公告弹窗统一 -->
-    <el-dialog
-        v-model="dialogVisible"
-        :title="dialogType === 'add' ? '添加车位' : '编辑车位'"
-        width="60%"
-        :close-on-click-modal="false"
-        class="parking-dialog"
-    >
-      <el-form
-          ref="parkingSpaceFormRef"
-          :model="parkingSpaceForm"
-          :rules="rules"
-          label-width="100px"
-      >
+    <el-dialog v-model="dialogVisible" :title="dialogType === 'add' ? '添加车位' : '编辑车位'" width="60%"
+      :close-on-click-modal="false" class="parking-dialog">
+      <el-form ref="parkingSpaceFormRef" :model="parkingSpaceForm" :rules="rules" label-width="100px">
         <el-form-item label="车位编号" prop="spaceNumber">
           <el-input v-model="parkingSpaceForm.spaceNumber" placeholder="请输入车位编号" />
         </el-form-item>
@@ -264,7 +195,7 @@ const parkingSpaceForm = ref({
   spaceNumber: '',
   status: '空闲',
   ownerId: '',
-  carNumber: ''
+  searchKeyword: ''
 })
 
 // 表单验证规则
@@ -311,21 +242,31 @@ const handleTabChange = (tabName) => {
 const loadParkingSpaces = async () => {
   loading.value = true
   try {
-    const res = await getParkingSpaces({
+    // 构造符合后端要求的参数（id和carNumber用于搜索）
+    const data = {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
-      keyword: searchKeyword.value || undefined
-    })
+      // 如果有搜索框绑定的是carNumber，直接传递；如果是其他字段（如keyword），需要映射
+      carNumber: searchKeyword.value || undefined  // 假设搜索框v-model绑定的是searchKeyword
+      // 如果需要根据id搜索，可以添加id参数：id: xxx
+    }
+
+    const res = await getParkingSpaces(data)  // 传递参数对象
 
     if (res.code === 200) {
-      parkingSpaces.value = res.data.rows
-      total.value = res.data.total
+      // 后端返回格式是PageResult，包含rows和total
+      parkingSpaces.value = res.data.rows || []
+      total.value = res.data.total || 0
     } else {
       ElMessage.error(res.message || '加载车位数据失败')
+      parkingSpaces.value = []
+      total.value = 0
     }
   } catch (error) {
     console.error('加载车位数据失败:', error)
     ElMessage.error('加载车位数据失败')
+    parkingSpaces.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
@@ -353,8 +294,8 @@ const loadApplications = async () => {
     })
 
     if (res.code === 200) {
-      applications.value = res.data || []
-      appTotal.value = res.data?.length || 0
+      applications.value = res.data.rows|| []
+      appTotal.value = res.data.total|| 0
     } else {
       ElMessage.error(res.message || '加载申请数据失败')
       applications.value = []
@@ -405,13 +346,13 @@ const handleEdit = (row) => {
 // 删除车位
 const handleDelete = (row) => {
   ElMessageBox.confirm(
-      `确定要删除车位 ${row.spaceNumber} 吗？`,
-      '确认删除',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
+    `确定要删除车位 ${row.spaceNumber} 吗？`,
+    '确认删除',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
   ).then(async () => {
     try {
       const res = await deleteParkingSpace(row.id)
@@ -527,7 +468,8 @@ onMounted(() => {
 /* 统一容器样式与公告页面一致 */
 .parking-space-management {
   padding: 20px;
-  background-color: #fff; /* 与公告页面背景统一 */
+  background-color: #fff;
+  /* 与公告页面背景统一 */
 }
 
 /* 操作栏样式：与公告页面保持一致 */
@@ -603,6 +545,7 @@ onMounted(() => {
 :deep(.even-row) {
   background-color: #f9f9f9;
 }
+
 :deep(.odd-row) {
   background-color: #fff;
 }

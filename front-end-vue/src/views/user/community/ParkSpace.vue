@@ -2,32 +2,40 @@
   <div class="parking-list">
     <div class="page-header">
       <h2>车位列表</h2>
+
+
+      <el-button type="primary" @click="handleToParkApply">查看我的申请</el-button>
       <el-button 
         type="primary" 
-        @click="showMyParking = !showMyParking; fetchParkingList()"
+        @click="handleToggleMyParking"
+        :loading="loading"
       >
         {{ showMyParking ? '查看全部车位' : '查看我的车位' }}
       </el-button>
     </div>
 
-    <!-- 车位筛选 -->
-    <el-input 
-      v-model="searchNumber" 
-      placeholder="输入车位编号搜索" 
-      style="width: 300px; margin: 10px 0"
-      clearable
-      @input="handleSearch"
-    />
 
-    <!-- 车位列表表格 -->
+    <!-- 车位列表表格：与管理页表格样式统一 -->
     <el-table 
       :data="parkingList" 
       border 
       style="width: 100%"
+      v-loading="loading"
+      :row-class-name="tableRowClassName"
     >
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="spaceNumber" label="车位编号" width="120" />
-      <el-table-column prop="status" label="状态" width="100">
+      <!-- 连续序号列：与管理页保持一致 -->
+      <el-table-column label="序号" width="60">
+        <template #default="{ $index }">
+          {{ (currentPage - 1) * pageSize + $index + 1 }}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="spaceNumber" label="车位编号" width="150" align="center">
+        <template #default="scope">
+          <el-tag type="primary">{{ scope.row.spaceNumber }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" width="120" align="center">
         <template #default="scope">
           <el-tag 
             :type="scope.row.status === '空闲' ? 'success' : 'warning'"
@@ -36,9 +44,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="userName" label="车主" width="100" />
-      <el-table-column prop="carNumber" label="车牌号" width="120" />
-      <el-table-column label="操作" width="150">
+      <el-table-column prop="userName" label="车主" width="300" align="center" />
+      <el-table-column prop="carNumber" label="车牌号" width="120" align="center" />
+      <el-table-column label="操作" width="150" fixed="right">
         <template #default="scope">
           <el-button 
             size="small" 
@@ -51,95 +59,189 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页栏：与管理页样式、布局完全一致 -->
+    <div class="pagination">
+      <el-pagination 
+        v-model:current-page="currentPage" 
+        v-model:page-size="pageSize" 
+        :total="total"
+        :page-sizes="[10, 20, 30, 50]" 
+        layout="total, sizes, prev, pager, next" 
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" 
+        :disabled="loading"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getParkingInfo } from '@/api/community' // 导入车位查询接口
+import { getParkingSpaces } from '@/api/admin.js'
 import { useUserStore } from '@/stores/user.js'
 import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
-// 状态定义
-const parkingList = ref([]) // 车位列表数据
-const searchNumber = ref('') // 搜索关键词
-const showMyParking = ref(false) // 是否显示我的车位（布尔值）
-const userStore = useUserStore() // 获取当前登录用户信息
+const userStore = useUserStore()
 
-// 页面加载时查询车位
-onMounted(async () => {
-  await fetchParkingList() // 异步函数需加await
+// 状态管理：与管理页保持一致的命名规范
+const parkingList = ref([])
+const searchNumber = ref('')
+const showMyParking = ref(false)
+const loading = ref(false) // 统一的加载状态
+
+// 分页参数：与管理页保持一致的参数名和默认值
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
+// 页面初始化加载
+onMounted(() => {
+  fetchParkingList()
 })
 
-/**
- * 查询车位列表（核心修改）
- * - 显示我的车位：传递当前用户ID给后端，精准查询用户名下车位
- * - 显示全部车位：不传递ID，后端返回全部车位
- */
+// 加载车位列表：与管理页loadParkingSpaces逻辑保持一致
 const fetchParkingList = async () => {
+  loading.value = true
   try {
-    let queryId = undefined // 初始化为undefined（不传参给后端）
-    
-    // 关键修改1：showMyParking是布尔值，直接判断true/false（不是字符串'false'）
-    if (showMyParking.value) {
-      // 关键修改2：从userStore获取用户ID（需确保登录后userInfo有值）
-      queryId = userStore.userInfo?.id // 可选链避免userInfo为null时报错
+    // 构造参数：与管理页参数传递风格一致
+    const params = {
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+      // 我的车位筛选条件
+      id: showMyParking.value ? userStore.userInfo?.id : undefined,
+      // 编号搜索条件：与管理页搜索参数处理方式一致
+      searchNumber: searchNumber.value.trim() || undefined
     }
 
-    // 调用后端接口：queryId为undefined时，后端查全部；有值时查该用户的车位
-    const res = await getParkingInfo(queryId) 
+    const res = await getParkingSpaces(params)
+
     if (res.code === 200) {
-      parkingList.value = res.data.rows // 赋值后端返回的车位列表
+      parkingList.value = res.data.rows || []
+      total.value = res.data.total || 0
+    } else {
+      ElMessage.error(res.message || '获取车位列表失败')
+      parkingList.value = []
+      total.value = 0
     }
   } catch (err) {
     console.error('查询车位失败', err)
+    ElMessage.error('加载车位数据失败')
+    parkingList.value = []
+    total.value = 0
+  } finally {
+    loading.value = false
   }
 }
 
-/**
- * 筛选逻辑（核心修改）
- * - 结合"我的车位"和"编号搜索"双重筛选
- * - 筛选结果直接更新parkingList，确保页面渲染
- */
-const handleSearch = async () => {
-  // 先获取原始数据（全部/我的车位）
-  await fetchParkingList()
-  let filteredList = [...parkingList.value]
-
-  // 1. 按车位编号模糊筛选（优先级：搜索框输入 > 我的车位）
-  if (searchNumber.value.trim()) {
-    filteredList = filteredList.filter(item => 
-      item.spaceNumber.toLowerCase().includes(searchNumber.value.trim().toLowerCase())
-    )
-  }
-
-  // 2. 按我的车位筛选（如果开启了"查看我的车位"）
-  if (showMyParking.value) {
-    filteredList = filteredList.filter(item => 
-      item.ownerId === userStore.userInfo?.id
-    )
-  }
-
-  // 关键：更新列表数据（之前只return没赋值，页面不刷新）
-  parkingList.value = filteredList
+// 切换"我的车位/全部车位"视图：与管理页切换逻辑一致
+const handleToggleMyParking = () => {
+  showMyParking.value = !showMyParking.value
+  currentPage.value = 1 // 切换视图时重置页码
+  fetchParkingList()
 }
 
-// 申请车位（跳转到申请页面并携带车位编号）
+
+// 分页大小变化：与管理页处理逻辑一致
+const handleSizeChange = (val) => {
+  pageSize.value = val
+  currentPage.value = 1 // 页大小变化时重置页码
+  fetchParkingList()
+}
+
+// 页码变化：与管理页处理逻辑一致
+const handleCurrentChange = (val) => {
+  currentPage.value = val
+  fetchParkingList()
+}
+
+// 申请车位：添加确认提示，与管理页操作风格一致
 const handleApply = (row) => {
-  // 修正路由路径：匹配你的路由配置（用户端二级路由）
-  router.push({
-    path: '/user/community/parking/apply', 
-    query: { spaceNumber: row.spaceNumber }
+  if (!userStore.userInfo) {
+    ElMessage.warning('请先登录')
+    return
+  }
+
+  ElMessageBox.confirm(
+    `确定要申请车位 ${row.spaceNumber} 吗？`,
+    '确认申请',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'info'
+    }
+  ).then(() => {
+    router.push({
+      path: '/user/community/parking/apply', 
+      query: { spaceNumber: row.spaceNumber }
+    })
+  }).catch(() => {
+    // 用户取消申请
   })
+}
+
+const handleToParkApply = () => {
+  router.push('/user/community/parking/apply/manage')
+}
+
+// 表格斑马纹样式：与管理页保持一致
+const tableRowClassName = ({ row, rowIndex }) => {
+  return rowIndex % 2 === 0 ? 'even-row' : 'odd-row'
 }
 </script>
 
 <style scoped>
+/* 统一容器样式与管理页一致 */
+.parking-list {
+  padding: 20px;
+  background-color: #fff;
+}
+
+/* 操作栏样式：与管理页保持一致 */
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+/* 分页样式：与管理页完全一致 */
+.pagination {
+  margin-top: 20px;
+  text-align: right;
+}
+
+/* 表格样式调整：与管理页统一 */
+:deep(.el-table) {
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+:deep(.el-table__header th) {
+  background-color: #f5f7fa;
+  font-weight: 500;
+  cursor: default;
+}
+
+/* 按钮样式统一：与管理页一致 */
+:deep(.el-button--primary) {
+  margin-left: 0;
+}
+
+/* 斑马纹样式：与管理页统一 */
+:deep(.even-row) {
+  background-color: #f9f9f9;
+}
+
+:deep(.odd-row) {
+  background-color: #fff;
+}
+
+/* 加载状态优化 */
+:deep(.el-loading-mask) {
+  background-color: rgba(255, 255, 255, 0.7);
 }
 </style>
