@@ -34,8 +34,6 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
     @Autowired
     private UserMapper userMapper;
 
-    @Autowired
-    private ParkingApplicationService parkingApplicationService;
 
     @Autowired
     private ParkingSpaceMapper parkingSpaceMapper;
@@ -98,14 +96,14 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
 
     @Override
     public Result<Void> updateParkingApplicationStatus(Integer id, ParkingApplication application) {
-        ParkingApplication existingApplication = parkingApplicationService.getById(id);
+        ParkingApplication existingApplication = this.getById(id);
         if (existingApplication == null) {
             return Result.fail("申请记录不存在");
         }
 
         // 更新状态
         existingApplication.setStatus(application.getStatus());
-        boolean success = parkingApplicationService.updateById(existingApplication);
+        boolean success = this.updateById(existingApplication);
 
         // 如果申请被同意，则更新车位信息
         if (success && "1".equals(application.getStatus())) {
