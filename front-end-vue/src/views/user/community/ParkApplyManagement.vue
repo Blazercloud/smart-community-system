@@ -58,14 +58,14 @@
           >
             修改
           </el-button>
-          <el-button 
+          <!-- <el-button 
             link 
             type="danger" 
             @click="handleWithdraw(scope.row)"
             :disabled="scope.row.status !== '0'"
           >
             撤回
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -143,33 +143,33 @@ const handleEdit = (row) => {
   ElMessage.info('修改功能待实现')
 }
 
-// 撤回申请（带确认弹窗）
-const handleWithdraw = (row) => {
-  ElMessageBox.confirm(
-    `确定要撤回车位 ${row.spaceNumber} 的申请吗？`,
-    '确认撤回',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }
-  ).then(async () => {
-    // 确认撤回后调用接口
-    loading.value = true
-    try {
-      // 预留撤回接口调用（实际开发中替换为真实接口）
-      ElMessage.success('申请已撤回')
-      fetchApplications() // 重新加载列表
-    } catch (error) {
-      console.error('撤回申请失败:', error)
-      ElMessage.error('撤回申请失败')
-    } finally {
-      loading.value = false
-    }
-  }).catch(() => {
-    // 用户取消撤回
-  })
-}
+// // 撤回申请（带确认弹窗）
+// const handleWithdraw = (row) => {
+//   ElMessageBox.confirm(
+//     `确定要撤回车位 ${row.spaceNumber} 的申请吗？`,
+//     '确认撤回',
+//     {
+//       confirmButtonText: '确定',
+//       cancelButtonText: '取消',
+//       type: 'warning'
+//     }
+//   ).then(async () => {
+//     // 确认撤回后调用接口
+//     loading.value = true
+//     try {
+//       // 预留撤回接口调用（实际开发中替换为真实接口）
+//       ElMessage.success('申请已撤回')
+//       fetchApplications() // 重新加载列表
+//     } catch (error) {
+//       console.error('撤回申请失败:', error)
+//       ElMessage.error('撤回申请失败')
+//     } finally {
+//       loading.value = false
+//     }
+//   }).catch(() => {
+//     // 用户取消撤回
+//   })
+// }
 
 // 新增：返回上一级页面
 const goBack = () => {
