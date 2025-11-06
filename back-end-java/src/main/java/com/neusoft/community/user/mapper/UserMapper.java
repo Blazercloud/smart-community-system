@@ -13,6 +13,6 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT * FROM user WHERE id = #{id}")
     User findById(Long id);
 
-    @Select("SELECT * FROM user WHERE name = #{name}")
+    @Select("SELECT * FROM user WHERE userName = #{name}")
     User findByUsername(String name);
 }

@@ -112,7 +112,7 @@ const fetchParkingList = async () => {
       currentPage: currentPage.value,
       pageSize: pageSize.value,
       // 我的车位筛选条件
-      id: showMyParking.value ? userStore.userInfo?.id : undefined,
+      Id: showMyParking.value ? userStore.userInfo?.id : undefined,
       // 编号搜索条件：与管理页搜索参数处理方式一致
       searchNumber: searchNumber.value.trim() || undefined
     }

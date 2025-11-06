@@ -160,8 +160,8 @@
             <el-option label="已占用" value="已占用" />
           </el-select>
         </el-form-item>
-        <el-form-item label="车主姓名" prop="ownerId">
-          <el-input v-model.number="parkingSpaceForm.ownerId" placeholder="请输入车主姓名（可选）" />
+        <el-form-item label="车主姓名" prop="userName">
+          <el-input v-model.number="parkingSpaceForm.userName" placeholder="请输入车主姓名（可选）" />
         </el-form-item>
         <el-form-item label="车牌号" prop="carNumber">
           <el-input v-model="parkingSpaceForm.carNumber" placeholder="请输入车牌号（可选）" />
@@ -217,7 +217,7 @@ const parkingSpaceForm = ref({
   id: '',
   spaceNumber: '',
   status: '空闲',
-  ownerId: '',
+  userName: '',
   searchKeyword: ''
 })
 
@@ -356,7 +356,7 @@ const handleAddParkingSpace = () => {
     id: '',
     spaceNumber: '',
     status: '空闲',
-    ownerId: '',
+    userName: '',
     carNumber: ''
   }
   dialogVisible.value = true

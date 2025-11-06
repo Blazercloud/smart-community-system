@@ -32,7 +32,7 @@ public class ParkingSpace {
     /**
      * 
      */
-    private Integer ownerId;
+    private Long ownerId;
 
     /**
      * 

@@ -1,6 +1,7 @@
 package com.neusoft.community.admin.controller;
 
 
+import com.neusoft.community.admin.dto.ParkingSpaceDTO;
 import com.neusoft.community.admin.entity.ParkingSpace;
 import com.neusoft.community.admin.service.ParkingSpaceService;
 import com.neusoft.community.admin.vo.ParkingSpaceVO;
@@ -25,35 +26,26 @@ public class ParkSpaceController {
     public Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Integer id,
+            @RequestParam(required = false) Long Id,
             @RequestParam(required = false) String carNumber){
-        return ParkingSpaceService.getParkingInfo(currentPage, pageSize, id, carNumber);
+        return ParkingSpaceService.getParkingInfo(currentPage, pageSize, Id, carNumber);
     }
     
     /**
      * 更新车位信息
      */
     @PutMapping
-    public Result<Void> updateParkingSpace(@RequestBody ParkingSpace parkingSpace) {
-        boolean success = ParkingSpaceService.updateById(parkingSpace);
-        if (success) {
-            return Result.success("车位信息更新成功");
-        } else {
-            return Result.fail("车位信息更新失败");
-        }
+    public Result<Void> updateParkingSpace(@RequestBody ParkingSpaceDTO parkingSpaceDTO) {
+
+        return ParkingSpaceService.updateParkingSpace(parkingSpaceDTO);
     }
     
     /**
      * 添加车位
      */
     @PostMapping
-    public Result<String> addParkingSpace(@RequestBody ParkingSpace parkingSpace) {
-        boolean success = ParkingSpaceService.save(parkingSpace);
-        if (success) {
-            return Result.success("车位添加成功");
-        } else {
-            return Result.fail("车位添加失败");
-        }
+    public Result<String> addParkingSpace(@RequestBody ParkingSpaceDTO parkingSpaceDTO) {
+      return ParkingSpaceService.addParkingSpace(parkingSpaceDTO);
     }
     
     /**

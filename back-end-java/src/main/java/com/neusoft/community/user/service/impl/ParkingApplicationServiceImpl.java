@@ -47,7 +47,7 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
     public Result<Void> createParkApplication(ParkingApplication parkingApplication) {
 
         // 检查用户是否已经创建过两个停车申请
-        Integer userId = parkingApplication.getUserId();
+        Long userId = parkingApplication.getUserId();
         QueryWrapper<ParkingSpace> wrapper = new QueryWrapper<>();
         wrapper.eq("owner_id", userId);
         if ( parkingSpaceService.count(wrapper) >= 2){

@@ -1,13 +1,12 @@
-package com.neusoft.community.admin.vo;
+package com.neusoft.community.admin.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
 
-public class ParkingSpaceVO {
+public class ParkingSpaceDTO {
 
     /**
      *
@@ -29,10 +28,7 @@ public class ParkingSpaceVO {
      *
      */
     private String userName;
-    /**
-     *
-     */
-    private Integer ownerId;
+
 
     /**
      *

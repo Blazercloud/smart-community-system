@@ -23,7 +23,7 @@ public class ParkingApplication {
     /**
      * 用户ID
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 车位号

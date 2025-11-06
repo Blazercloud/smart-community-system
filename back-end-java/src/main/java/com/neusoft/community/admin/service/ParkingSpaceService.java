@@ -1,5 +1,6 @@
 package com.neusoft.community.admin.service;
 
+import com.neusoft.community.admin.dto.ParkingSpaceDTO;
 import com.neusoft.community.admin.entity.ParkingSpace;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.neusoft.community.admin.vo.ParkingSpaceVO;
@@ -15,5 +16,9 @@ import java.util.List;
 */
 public interface ParkingSpaceService extends IService<ParkingSpace> {
 
-     Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Integer id, String carNumber) ;
+     Result<PageResult<List<ParkingSpaceVO>>> getParkingInfo(Integer currentPage, Integer pageSize, Long Id, String carNumber) ;
+
+     Result<String> addParkingSpace(ParkingSpaceDTO parkingSpaceDTO);
+
+     Result<Void> updateParkingSpace(ParkingSpaceDTO parkingSpaceDTO);
 }
