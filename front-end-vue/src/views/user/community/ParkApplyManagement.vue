@@ -1,6 +1,15 @@
 <template>
   <div class="application-management">
+    <!-- 添加返回按钮 -->
     <div class="page-header">
+      <el-button 
+        size="small" 
+        @click="goBack"
+        style="margin-bottom: 10px; margin-right: 20px;"
+      >
+        <el-icon><ArrowLeft  /></el-icon>
+        返回上一级
+      </el-button>
       <h2>我的车位申请</h2>
     </div>
 
@@ -12,6 +21,7 @@
       v-loading="loading"
       :row-class-name="tableRowClassName"
     >
+      <!-- 表格列定义保持不变 -->
       <el-table-column label="序号" width="60">
         <template #default="{ $index }">
           {{ $index + 1 }}
@@ -67,6 +77,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getParkSpaceApplication } from '@/api/community.js'
 import { useUserStore } from '@/stores/user.js'
+import { ArrowLeft  } from '@element-plus/icons-vue'
 
 // 状态管理
 const applications = ref([])
@@ -88,7 +99,6 @@ const fetchApplications = async () => {
   loading.value = true
   try {
     // 调用用户申请查询接口（传入当前用户ID）
-
     const params = {
       userId: userStore.userInfo.id
     }
@@ -131,9 +141,6 @@ const tableRowClassName = ({ rowIndex }) => {
 const handleEdit = (row) => {
   // 此处可打开修改弹窗，编辑后调用更新接口
   ElMessage.info('修改功能待实现')
-  // 示例：打开弹窗并加载当前申请数据
-  // editDialogVisible.value = true
-  // currentApplication.value = { ...row }
 }
 
 // 撤回申请（带确认弹窗）
@@ -151,13 +158,8 @@ const handleWithdraw = (row) => {
     loading.value = true
     try {
       // 预留撤回接口调用（实际开发中替换为真实接口）
-      // const res = await withdrawParkApplication(row.id)
-      // if (res.code === 200) {
-        ElMessage.success('申请已撤回')
-        fetchApplications() // 重新加载列表
-      // } else {
-      //   ElMessage.error(res.message || '撤回失败')
-      // }
+      ElMessage.success('申请已撤回')
+      fetchApplications() // 重新加载列表
     } catch (error) {
       console.error('撤回申请失败:', error)
       ElMessage.error('撤回申请失败')
@@ -167,6 +169,11 @@ const handleWithdraw = (row) => {
   }).catch(() => {
     // 用户取消撤回
   })
+}
+
+// 新增：返回上一级页面
+const goBack = () => {
+  window.history.back()
 }
 </script>
 

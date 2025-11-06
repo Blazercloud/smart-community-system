@@ -28,23 +28,18 @@ public class ParkingApplicationController {
     @Autowired
     private ParkingApplicationService parkingApplicationService;
     
-    @Autowired
-    private UserMapper userMapper;
-    
-    @Autowired
-    private ParkingSpaceMapper parkingSpaceMapper;
 
     /**
      * 获取所有停车申请（带用户信息）
      */
-    @NoAuth
     @GetMapping
     @Operation(summary = "获取所有停车申请")
     public Result<PageResult<List<ParkingApplicationVO>>> getAllParkingApplications(
             @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String status) {
         // 获取所有申请
-        return parkingApplicationService.getAllParkingApplication(currentPage,pageSize);
+        return parkingApplicationService.getAllParkingApplication(currentPage,pageSize,status);
     }
 
     /**
@@ -56,9 +51,7 @@ public class ParkingApplicationController {
             @PathVariable Integer id,
             @RequestBody ParkingApplication application) {
 
-
         return parkingApplicationService.updateParkingApplicationStatus(id, application);
         // 获取原始申请信息
-
     }
 }

@@ -25,7 +25,7 @@ public interface ParkingApplicationService extends IService<ParkingApplication> 
     /**
      * 获取所有停车申请（带用户信息）
      */
-    Result<PageResult<List<ParkingApplicationVO>>> getAllParkingApplication(Integer currentPage, Integer pageSize);
+    Result<PageResult<List<ParkingApplicationVO>>> getAllParkingApplication(Integer currentPage, Integer pageSize, String status);
 
     Result<Void> updateParkingApplicationStatus(Integer id, ParkingApplication application);
 }

@@ -68,8 +68,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="ParkingApplication" />
-                  <option name="tableName" value="parking_application" />
+                  <option name="className" value="Repair" />
+                  <option name="tableName" value="repair" />
                 </TableUIInfo>
               </list>
             </option>

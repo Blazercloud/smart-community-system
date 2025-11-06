@@ -1,18 +1,19 @@
 <template>
   <div class="parking-list">
     <div class="page-header">
-      <h2>车位列表</h2>
-
-
-      <el-button type="primary" @click="handleToParkApply">查看我的申请</el-button>
-      <el-button 
-        type="primary" 
-        @click="handleToggleMyParking"
-        :loading="loading"
-      >
-        {{ showMyParking ? '查看全部车位' : '查看我的车位' }}
-      </el-button>
-    </div>
+  <h2>车位列表</h2>
+  
+  <div style="display: flex; gap: 10px; margin-top: 10px;">
+    <el-button type="primary" @click="handleToParkApply">查看我的申请</el-button>
+    <el-button 
+      type="primary" 
+      @click="handleToggleMyParking"
+      :loading="loading"
+    >
+      {{ showMyParking ? '查看全部车位' : '查看我的车位' }}
+    </el-button>
+  </div>
+</div>
 
 
     <!-- 车位列表表格：与管理页表格样式统一 -->

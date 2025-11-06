@@ -1,5 +1,8 @@
 import request from '@/utils/request'
 
+
+export const filePath = 'http://localhost:8989/file/upload'
+
 // 获取公告列表
 export function getNoticeList(params) {
   return request({
@@ -39,7 +42,7 @@ export function getParkSpaceApplication(params) {
 // 报事报修
 export function submitRepair(data) {
   return request({
-    url: '/community/repair',
+    url: '/user/repair',
     method: 'post',
     data
   })
@@ -47,9 +50,17 @@ export function submitRepair(data) {
 
 export function getRepairList(params) {
   return request({
-    url: '/community/repair/list',
+    url: '/user/repair',
     method: 'get',
     params
+  })
+}
+
+export function imgUpload(data) {
+  return request({
+    url: '/file/upload' ,
+    method: 'post',
+    data
   })
 }
 

@@ -38,6 +38,27 @@
             <version>3.0.3</version>
         </dependency>
         <!--Spring Boot 3与MyBatis 3.0.x不完全兼容，这是跑不起来的根源问题所在-->
+
+        <!-- minio -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.2</version>  <!-- 较稳定版本，兼容多数场景 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.10.0</version> <!-- 选择与MinIO客户端兼容的版本 -->
+        </dependency>
+
+
         <!-- MyBatis Plus -->
         <dependency>
             <groupId>com.baomidou</groupId>

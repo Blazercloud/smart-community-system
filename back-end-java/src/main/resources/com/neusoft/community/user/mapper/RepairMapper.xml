@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.community.user.mapper.RepairMapper">
+
+    <resultMap id="BaseResultMap" type="com.neusoft.community.user.entity.Repair">
+            <id property="id" column="id" />
+            <result property="userId" column="user_id" />
+            <result property="repairType" column="repair_type" />
+            <result property="title" column="title" />
+            <result property="description" column="description" />
+            <result property="imgUrl" column="img_url" />
+            <result property="phone" column="phone" />
+            <result property="expectTime" column="expect_time" />
+            <result property="status" column="status" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="assignedWorker" column="assigned_worker" />
+            <result property="handleDetail" column="handle_detail" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,repair_type,title,description,img_url,
+        phone,expect_time,status,create_time,update_time,
+        assigned_worker,handle_detail
+    </sql>
+</mapper>

@@ -1,10 +1,13 @@
 package com.neusoft.community.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.neusoft.community.admin.entity.ParkingSpace;
 import com.neusoft.community.admin.mapper.ParkingSpaceMapper;
+import com.neusoft.community.admin.service.ParkingSpaceService;
+import com.neusoft.community.admin.service.impl.ParkingSpaceServiceImpl;
 import com.neusoft.community.admin.vo.ParkingApplicationVO;
 import com.neusoft.community.admin.vo.ParkingSpaceVO;
 import com.neusoft.community.common.PageResult;
@@ -35,14 +38,30 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
     private UserMapper userMapper;
 
 
+
     @Autowired
-    private ParkingSpaceMapper parkingSpaceMapper;
+    private ParkingSpaceService parkingSpaceService;
 
 
     @Override
     public Result<Void> createParkApplication(ParkingApplication parkingApplication) {
 
+        // 检查用户是否已经创建过两个停车申请
+        Integer userId = parkingApplication.getUserId();
+        QueryWrapper<ParkingSpace> wrapper = new QueryWrapper<>();
+        wrapper.eq("owner_id", userId);
+        if ( parkingSpaceService.count(wrapper) >= 2){
+            return Result.fail("您的车位已经大于二");
+        }
 
+        QueryWrapper<ParkingApplication> parkingApplicationQueryWrapper = new QueryWrapper<>();
+        parkingApplicationQueryWrapper.eq("user_id", userId)
+                .eq("status", "0");
+        if (this.count(parkingApplicationQueryWrapper) >= 2){
+            return Result.fail("您已经创建过两个车位申请,待审批");
+        }
+
+        parkingApplication.setStatus("0");
         return this.save(parkingApplication)? Result.success("创建申请成功") : Result.fail() ;
     }
 
@@ -57,9 +76,18 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
      * 获取所有停车申请（带用户信息）
      */
     @Override
-    public Result<PageResult<List<ParkingApplicationVO>>> getAllParkingApplication(Integer currentPage,Integer pageSize) {
+    public Result<PageResult<List<ParkingApplicationVO>>> getAllParkingApplication(Integer currentPage,Integer pageSize,String status) {
+
+
+
         Page<ParkingApplication> page = new Page<>(currentPage, pageSize);
         QueryWrapper<ParkingApplication> wrapper = new QueryWrapper<>();
+
+
+        // 添加ownerId查询条件（仅当ownerId不为null时）
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("status", status);
+        }
 
 
         // 执行分页查询
@@ -108,7 +136,7 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
         // 如果申请被同意，则更新车位信息
         if (success && "1".equals(application.getStatus())) {
             // 根据车位号查找车位
-            ParkingSpace parkingSpace = parkingSpaceMapper.selectOne(
+            ParkingSpace parkingSpace = parkingSpaceService.getOne(
                     new QueryWrapper<ParkingSpace>().eq("space_number", existingApplication.getSpaceNumber())
             );
 
@@ -117,7 +145,7 @@ public class ParkingApplicationServiceImpl extends ServiceImpl<ParkingApplicatio
                 parkingSpace.setOwnerId(existingApplication.getUserId());
                 parkingSpace.setCarNumber(existingApplication.getCarNumber());
                 parkingSpace.setStatus("已占用"); // 更新车位状态为已占用
-                parkingSpaceMapper.updateById(parkingSpace);
+                parkingSpaceService.updateById(parkingSpace);
             }
         }
 

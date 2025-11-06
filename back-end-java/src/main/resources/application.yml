@@ -25,6 +25,8 @@ spring:
           min-idle: 0
 
 
+
+
 server:
   port: 8989
   servlet:
@@ -77,3 +79,11 @@ knife4j:
   basic:
     enable: false
   production: false
+
+
+#minio配置(下面四个都要替换成自己的)
+minio:
+  access-key: minioadmin
+  secret-key: minioadmin
+  endpoint: http://127.0.0.1:9001
+  bucket-name: community-img

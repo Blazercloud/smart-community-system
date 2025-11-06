@@ -9,7 +9,7 @@
     <!-- 搜索框 -->
     <el-input v-model="searchKeyword" placeholder="请输入标题或内容关键字" style="width: 250px; "
       @keyup.enter="loadNotices" />
-    <el-button type="primary" @click="loadNotices" :loading="loading" style="margin-left: 20px;">
+    <el-button type="primary" @click="loadNotices" style="margin-left: 20px;">
       <el-icon>
         <Search />
       </el-icon>

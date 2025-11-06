@@ -34,7 +34,7 @@ public class ParkSpaceController {
      * 更新车位信息
      */
     @PutMapping
-    public Result<String> updateParkingSpace(@RequestBody ParkingSpace parkingSpace) {
+    public Result<Void> updateParkingSpace(@RequestBody ParkingSpace parkingSpace) {
         boolean success = ParkingSpaceService.updateById(parkingSpace);
         if (success) {
             return Result.success("车位信息更新成功");

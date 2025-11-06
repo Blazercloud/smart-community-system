@@ -86,7 +86,7 @@ public Result<PageResult<List<NoticeVO>>> getNoticeList(
 
     // 4. 逻辑判断：无数据时返回提示
     if (noticeList == null || noticeList.isEmpty()) {
-        return Result.fail("当前暂无公告数据");
+        return Result.success("当前暂无公告数据");
     }
 
     // 5. 封装分页结果

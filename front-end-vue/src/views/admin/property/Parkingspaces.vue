@@ -21,6 +21,25 @@
         查询
       </el-button>
     </div>
+    <!-- 操作栏：与公告页面保持一致的布局和间距 -->
+    <div class="operation-bar" v-if="activeTab === 'applications'">
+   
+         <!-- 状态筛选 -->
+      <el-select v-model="status" placeholder="请选择状态" style="width: 150px; " @change="loadNotices">
+        <el-option label="全部" value="" />
+        <el-option label="待审批" value="0" />
+        <el-option label="已同意" value="1" />
+        <el-option label="已退回" value="2" />
+      </el-select>
+
+      <!-- 查询按钮：与公告页面样式统一 -->
+      <el-button type="primary" @click="loadApplications" :loading="loading" style="margin-left: 20px;">
+        <el-icon>
+          <Search />
+        </el-icon>
+        查询
+      </el-button>
+    </div>
 
     <!-- 标签页：简化样式，与公告页面的导航风格对齐 -->
     <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="main-tabs">
@@ -50,7 +69,7 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="userName" label="车主" width="300" align="center" />
+            <el-table-column prop="userName" label="车主姓名" width="300" align="center" />
             <el-table-column prop="carNumber" label="车牌号" width="120" align="center" />
             <el-table-column label="操作" width="200" fixed="right">
               <template #default="scope">
@@ -141,8 +160,8 @@
             <el-option label="已占用" value="已占用" />
           </el-select>
         </el-form-item>
-        <el-form-item label="车主ID" prop="ownerId">
-          <el-input v-model.number="parkingSpaceForm.ownerId" placeholder="请输入车主ID（可选）" />
+        <el-form-item label="车主姓名" prop="ownerId">
+          <el-input v-model.number="parkingSpaceForm.ownerId" placeholder="请输入车主姓名（可选）" />
         </el-form-item>
         <el-form-item label="车牌号" prop="carNumber">
           <el-input v-model="parkingSpaceForm.carNumber" placeholder="请输入车牌号（可选）" />
@@ -170,6 +189,10 @@ import {
   getParkingApplications,
   updateParkingApplicationStatus
 } from '@/api/admin.js'
+
+// 搜索和状态筛选
+const status = ref('')
+
 
 // 车位管理相关数据
 const activeTab = ref('parkingSpaces')
@@ -290,7 +313,8 @@ const loadApplications = async () => {
   try {
     const res = await getParkingApplications({
       currentPage: appCurrentPage.value,
-      pageSize: appPageSize.value
+      pageSize: appPageSize.value,
+      status: status.value,
     })
 
     if (res.code === 200) {
@@ -302,10 +326,12 @@ const loadApplications = async () => {
       appTotal.value = 0
     }
   } catch (error) {
-    console.error('加载申请数据失败:', error)
-    ElMessage.error('加载申请数据失败')
+
     applications.value = []
     appTotal.value = 0
+    console.error('加载申请数据失败:', error)
+    ElMessage.error('加载申请数据失败')
+   
   } finally {
     loading.value = false
   }
