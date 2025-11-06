@@ -12,6 +12,15 @@ export function getNoticeList(params) {
   })
 }
 
+// 车位管理相关API
+export function getParkingSpaces(params) {
+  return request({
+    url: '/community/parking/info',
+    method: 'get',
+    params
+  })
+}
+
 // 访客登记
 export function registerVisitor(data) {
   return request({

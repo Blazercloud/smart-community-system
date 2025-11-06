@@ -79,7 +79,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getParkingSpaces } from '@/api/admin.js'
+import { getParkingSpaces } from '@/api/community.js'
 import { useUserStore } from '@/stores/user.js'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'

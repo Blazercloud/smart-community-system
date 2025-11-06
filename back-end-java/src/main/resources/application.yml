@@ -87,3 +87,7 @@ minio:
   secret-key: minioadmin
   endpoint: http://127.0.0.1:9001
   bucket-name: community-img
+
+
+
+

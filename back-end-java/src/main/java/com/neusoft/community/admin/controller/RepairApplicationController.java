@@ -18,7 +18,6 @@ public class RepairApplicationController {
     private RepairService repairService;
 
 
-    @NoAuth
     @GetMapping
     public Result<PageResult<List<Repair>>> getAllRepair(
             @RequestParam(defaultValue = "1") Integer currentPage,
@@ -27,7 +26,6 @@ public class RepairApplicationController {
         return repairService.getAllRepair(currentPage, pageSize);
     }
 
-    @NoAuth
     @PutMapping
     public Result<Void> updateRepair(@RequestBody Repair repair){
         return repairService.updateRepair(repair);

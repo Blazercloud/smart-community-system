@@ -57,7 +57,8 @@ public class UserService {
         // 生成 JWT token
 
         userMapper.insert(user);
-        String token = jwtUtil.generateToken(user.getPhone().toString(), "USER");
+        // UserService.java 中 register 和 login 方法
+        String token = jwtUtil.generateToken(user.getId().toString(), "USER");
 
         return new LoginResponse(token, user);
     }
@@ -92,7 +93,7 @@ public class UserService {
         }
 
         // 生成 JWT token
-        String token = jwtUtil.generateToken(user.getPhone().toString(), "USER");
+        String token = jwtUtil.generateToken(user.getId().toString(), "USER");
 
         return new LoginResponse(token, user);
     }

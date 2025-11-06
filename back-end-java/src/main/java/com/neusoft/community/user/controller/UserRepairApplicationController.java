@@ -19,14 +19,10 @@ public class UserRepairApplicationController {
     @Autowired
     private RepairService repairService;
 
-    @NoAuth
     @PostMapping
     public Result<Void> applyRepair(@Valid @RequestBody Repair repair) {return repairService.applyRepair(repair);
-
-
     }
 
-    @NoAuth
     @GetMapping
     public Result<PageResult<List<Repair>>> getRepair(
             @RequestParam(defaultValue = "1") Integer currentPage,

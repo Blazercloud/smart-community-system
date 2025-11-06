@@ -42,7 +42,7 @@ export const deleteNotice = (id) => {
 // 车位管理相关API
 export function getParkingSpaces(params) {
   return request({
-    url: '/community/parking/info',
+    url: '/admin/parking/info',
     method: 'get',
     params
   })
@@ -50,7 +50,7 @@ export function getParkingSpaces(params) {
 
 export function updateParkingSpace(data) {
   return request({
-    url: '/community/parking',
+    url: '/admin/parking',
     method: 'put',
     data
   })
@@ -58,7 +58,7 @@ export function updateParkingSpace(data) {
 
 export function addParkingSpace(data) {
   return request({
-    url: '/community/parking',
+    url: '/admin/parking',
     method: 'post',
     data
   })
@@ -66,7 +66,7 @@ export function addParkingSpace(data) {
 
 export function deleteParkingSpace(id) {
   return request({
-    url: `/community/parking/${id}`,
+    url: `/admin/parking/${id}`,
     method: 'delete'
   })
 }

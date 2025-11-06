@@ -29,7 +29,6 @@ public class UserNoticeController {
     /**
      * 分页查询公告列表（关联role表）
      */
-    @NoAuth
     @GetMapping("/noticelist")
     @Operation(summary = "分页查询公告列表")
 public Result<PageResult<List<NoticeVO>>> getUserNoticeList(

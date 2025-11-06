@@ -21,7 +21,6 @@ public class UserParkApplicationController {
     @Autowired
     ParkingApplicationService ParkingApplicationService;
 
-    @NoAuth
     @PostMapping
     @Operation(summary = "用户创建停车申请")
     public Result<Void> createParkApplication(@RequestBody ParkingApplication parkingApplication){
@@ -29,7 +28,6 @@ public class UserParkApplicationController {
     }
 
 
-    @NoAuth
     @Operation(summary = "获取用户停车申请")
     @GetMapping
     public Result<List<ParkingApplication>> getParkingApplication(@RequestParam(value = "userId", required = false) Integer userId){

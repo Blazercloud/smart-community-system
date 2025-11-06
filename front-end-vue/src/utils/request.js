@@ -48,8 +48,8 @@ request.interceptors.response.use(
 
     const status = error.response?.status
 
-    // ✅ 处理401未授权（JWT过期/无效）
-    if (status === 401) {
+    // // ✅ 处理401未授权（JWT过期/无效）
+    if (status === 4012) {
       const userStore = useUserStore()
       userStore?.clearUserInfo()
 
