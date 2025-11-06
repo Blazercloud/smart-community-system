@@ -17,4 +17,8 @@ public interface RepairService extends IService<Repair> {
     Result<Void> applyRepair(Repair repair);
 
     Result<PageResult<List<Repair>>> getRepair(Integer currentPage, Integer pageSize, Integer userId);
+
+    Result<PageResult<List<Repair>>> getAllRepair(Integer currentPage, Integer pageSize);
+
+    Result<Void> updateRepair(Repair repair);
 }

@@ -87,3 +87,20 @@ export function updateParkingApplicationStatus(id, data) {
     data
   })
 }
+
+// 报修管理相关API
+export function getRepairList(params) {
+  return request({
+    url: '/admin/repair',
+    method: 'get',
+    params
+  })
+}
+
+export function updateRepair(data){
+  return request({
+    url: '/admin/repair',
+    method: 'put',
+    data
+  })
+}

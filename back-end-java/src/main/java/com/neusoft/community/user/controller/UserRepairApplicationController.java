@@ -26,7 +26,7 @@ public class UserRepairApplicationController {
 
     }
 
-@NoAuth
+    @NoAuth
     @GetMapping
     public Result<PageResult<List<Repair>>> getRepair(
             @RequestParam(defaultValue = "1") Integer currentPage,

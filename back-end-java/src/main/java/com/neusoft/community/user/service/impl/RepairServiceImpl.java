@@ -72,4 +72,40 @@ public class RepairServiceImpl extends ServiceImpl<RepairMapper, Repair> impleme
         }
         return Result.success(pageResult);
     }
+
+    @Override
+    public Result<PageResult<List<Repair>>> getAllRepair(Integer currentPage, Integer pageSize) {
+
+        //默认的分页参数
+        if (currentPage == null || currentPage < 1) {
+            currentPage = 1;
+        }
+        if (pageSize == null || pageSize < 1 || pageSize > 100) {
+            pageSize = 10;
+        }
+
+        // 1. 构建分页对象和查询条件
+        Page<Repair> page = new Page<>(currentPage, pageSize);
+        QueryWrapper<Repair> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+
+        // 2. 执行分页查询
+        Page<Repair> repairPage = this.page(page, queryWrapper);
+        List<Repair> repairs = repairPage.getRecords();
+
+        // 3. 封装分页结果（无数据时返回空列表，而非失败）
+        PageResult<List<Repair>> pageResult = new PageResult<>();
+        pageResult.setTotal(repairPage.getTotal());
+        pageResult.setRows(repairs);
+        if (repairPage.getRecords().isEmpty()) {
+            return Result.success("暂无报修记录");
+        }
+
+        return  Result.success(pageResult);
+    }
+
+    @Override
+    public Result<Void> updateRepair(Repair repair) {
+        return this.updateById(repair) ? Result.success("修改成功") : Result.fail("修改失败");
+    }
 }
