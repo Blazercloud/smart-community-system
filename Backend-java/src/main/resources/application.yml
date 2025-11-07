@@ -1,0 +1,90 @@
+spring:
+  main:
+    web-application-type: servlet
+  application:
+    name: smart-community
+  datasource:
+    url: jdbc:mysql://localhost:3306/smart_community?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+server:
+  port: 8989
+  servlet:
+    context-path: /api
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.neusoft.community.**.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+
+jwt:
+  secret: A6YbPCpYoQqRfQm7hXvF6A1eJmf4wyo1HzR8SAmuGic=
+  expiration: 86400000
+
+
+logging:
+  level:
+    root: info
+    com.neusoft.community: debug
+    com.baomidou.mybatisplus: debug
+  file:
+    name: logs/community.log
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+  openapi:
+    title: 智慧社区平台API文档
+    description: 东软智慧社区平台接口文档
+    email: support@neusoft.com
+    url: http://localhost:8989
+    version: 1.0.0
+  basic:
+    enable: false
+  production: false
+
+
+#minio配置(下面四个都要替换成自己的)
+minio:
+  access-key: minioadmin
+  secret-key: minioadmin
+  endpoint: http://127.0.0.1:9001
+  bucket-name: community-img
+
+
+
+
