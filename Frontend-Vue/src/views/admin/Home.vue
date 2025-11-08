@@ -59,11 +59,6 @@
     <el-menu-item index="/admin/property/repairs">报事维修</el-menu-item>
   </el-sub-menu>
 
-  <!-- 数据统计 -->
-  <el-menu-item index="/admin/statistics">
-    <el-icon><DataAnalysis /></el-icon>
-    <span>数据统计</span>
-  </el-menu-item>
 </el-menu>
 
         </el-aside>

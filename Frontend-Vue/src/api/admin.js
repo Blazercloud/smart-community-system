@@ -201,3 +201,19 @@ export function deleteVisitor(id) {
     method: 'delete'
   })
 }
+
+// 首页汇总信息
+export function getDashboardOverview() {
+  return request({
+    url: '/admin/dashboard/overview',
+    method: 'get'
+  })
+}
+
+// 最新公告
+export function getLatestNotices() {
+  return request({
+    url: '/admin/dashboard/latest-notices',
+    method: 'get'
+  })
+}

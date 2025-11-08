@@ -47,8 +47,8 @@
       <el-table-column prop="visitTime" label="到访时间" width="180">
         <template #default="{ row }">{{ formatTime(row.visitTime) }}</template>
       </el-table-column>
-      <el-table-column prop="relatedUser" label="关联业主" width="120">
-        <template #default="{ row }">{{ row.relatedUser || '未关联' }}</template>
+      <el-table-column prop="relatedUserName" label="关联业主" width="150">
+        <template #default="{ row }">{{ row.relatedUserName || '未关联' }}</template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="120">
         <template #default="{ row }">

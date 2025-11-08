@@ -1,45 +1,45 @@
 package com.neusoft.community.admin.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.neusoft.community.admin.entity.Visitor;
 import com.neusoft.community.admin.mapper.VisitorMapper;
 import com.neusoft.community.admin.service.VisitorService;
+import com.neusoft.community.admin.vo.VisitorVO;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
+import jakarta.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @Service
-public class VisitorServiceImpl extends ServiceImpl<VisitorMapper, Visitor> implements VisitorService {
+public class VisitorServiceImpl implements VisitorService {
+
+    @Resource
+    private VisitorMapper visitorMapper;
 
     @Override
-    public Page<Visitor> getVisitorList(Page<Visitor> page, Map<String, Object> params) {
+    public List<VisitorVO> getVisitorVOList(int currentPage, int pageSize, Map<String, Object> params) {
+        int offset = (currentPage - 1) * pageSize;
         String keyword = (String) params.get("keyword");
         String type = (String) params.get("type");
+        return visitorMapper.selectVisitorVOList(offset, pageSize, keyword, type);
+    }
 
-        LambdaQueryWrapper<Visitor> query = new LambdaQueryWrapper<>();
-        if (StringUtils.hasText(keyword)) {
-            query.and(q -> q.like(Visitor::getName, keyword)
-                    .or()
-                    .like(Visitor::getPurpose, keyword));
-        }
-        if (StringUtils.hasText(type)) {
-            query.eq(Visitor::getVisitorType, type);
-        }
-
-        query.orderByDesc(Visitor::getVisitTime);
-        return this.page(page, query);
+    @Override
+    public long countVisitorVO(Map<String, Object> params) {
+        String keyword = (String) params.get("keyword");
+        String type = (String) params.get("type");
+        return visitorMapper.countVisitorVOList(keyword, type);
     }
 
     @Override
     public void addVisitor(Visitor visitor) {
-        this.save(visitor);
+        // MyBatis-Plus 自带 insert 方法
+        visitorMapper.insert(visitor);
     }
 
     @Override
     public void deleteVisitor(Integer id) {
-        this.removeById(id);
+        // MyBatis-Plus 自带 deleteById 方法
+        visitorMapper.deleteById(id);
     }
 }

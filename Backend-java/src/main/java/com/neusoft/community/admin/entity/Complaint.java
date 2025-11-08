@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class Complaint {
     @TableId(type = IdType.AUTO)
     private Integer id;
-
     private Integer userId;
     private String content;
     private Integer isHandled;

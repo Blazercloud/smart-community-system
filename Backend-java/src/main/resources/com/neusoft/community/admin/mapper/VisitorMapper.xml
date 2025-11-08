@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.neusoft.community.admin.mapper.VisitorMapper">
+
+    <!-- 访客列表分页查询 -->
+    <select id="selectVisitorVOList" resultType="com.neusoft.community.admin.vo.VisitorVO">
+        SELECT
+        v.id,
+        v.name,
+        v.visitor_type AS visitorType,
+        v.purpose,
+        v.visit_time AS visitTime,
+        v.status,
+        CONCAT(u.username, '-', u.room_number) AS relatedUserName
+        FROM visitor v
+        LEFT JOIN user u ON v.related_user = u.id
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (v.name LIKE CONCAT('%', #{keyword}, '%')
+            OR v.purpose LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="type != null and type != ''">
+            AND v.visitor_type = #{type}
+        </if>
+        ORDER BY v.visit_time DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 访客数量统计（分页总数） -->
+    <select id="countVisitorVOList" resultType="long">
+        SELECT COUNT(*)
+        FROM visitor v
+        LEFT JOIN user u ON v.related_user = u.id
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (v.name LIKE CONCAT('%', #{keyword}, '%')
+            OR v.purpose LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="type != null and type != ''">
+            AND v.visitor_type = #{type}
+        </if>
+    </select>
+
+</mapper>
